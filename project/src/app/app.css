@@ -1,0 +1,5 @@
+.main-content {
+    flex: 1; /* Това казва: "Заеми цялото налично място между набара и футъра" */
+    display: flex;
+    flex-direction: column;
+}
