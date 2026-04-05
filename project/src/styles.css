@@ -181,3 +181,69 @@ app-footer {
   backdrop-filter: blur(6px);
   font-size: 14px;
 }
+
+/* ---------------- МЕДИЙНИ ЗАПИТВАНИЯ ЗА МОБИЛНИ УСТРОЙСТВА ---------------- */
+@media (max-width: 768px) {
+    
+    /* 1. Навигация - премахваме абсолютното центриране, за да не се застъпват елементите */
+    .navbar {
+        flex-direction: column; /* Елементите един под друг */
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .nav-links {
+        position: static; /* Премахва absolute */
+        transform: none;  /* Премахва translateX */
+        left: auto;
+        gap: 15px;
+        order: 3; /* Слага линковете най-отдолу в набара */
+    }
+
+    .logo {
+        order: 1;
+        font-size: 20px;
+    }
+
+    .nav-right {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-search input {
+        width: 140px; /* Малко по-тясно търсене за мобилни */
+    }
+
+    /* 2. Логин форма - правим я да заема повече място на екрана */
+    .login-container {
+        padding: 10px;
+        min-height: 80vh;
+    }
+
+    .login-box {
+        padding: 25px 20px; /* По-малко вътрешно разстояние */
+        width: 95%;        /* Почти до края на екрана */
+    }
+
+    .login-box h2 {
+        font-size: 22px;
+    }
+
+    /* 3. Книгите (Grid) - правим ги по 2 на ред или 1, ако е много тясно */
+    .book-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .book {
+        width: auto; /* Позволява на грида да контролира размера */
+        padding: 10px;
+    }
+
+    /* 4. Hero секция */
+    .hero h1 {
+        font-size: 28px;
+    }
+}
