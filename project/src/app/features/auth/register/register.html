@@ -3,28 +3,74 @@
     <h2>Join the Enigma</h2>
     <p>Create your key to the hidden library</p>
 
-    <form>
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
       <div class="input-group">
         <label>Username</label>
-        <input type="text" name="name" placeholder="username" required />
+        <input
+          appInputError
+          type="text"
+          name="username"
+          placeholder="username"
+          formControlName="username"
+        />
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+          @if (registerForm.get('username')?.errors?.['required']) {
+            <p class="error">Username is required</p>
+          }
+        }
       </div>
 
       <div class="input-group">
         <label>Email Address</label>
-        <input type="email" name="email" placeholder="your@email.com" required />
+        <input
+          appInputError
+          type="email"
+          name="email"
+          placeholder="your@email.com"
+          formControlName="email"
+        />
+        @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+          <p class="error">Enter a valid email</p>
+        }
       </div>
 
       <div class="input-group">
         <label>Password</label>
-        <input type="password" name="password" placeholder="••••••••" required />
+        <input
+          appInputError
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          formControlName="password"
+        />
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <p class="error">Password must be at least 5 latin letters/digits</p>
+        }
       </div>
 
       <div class="input-group">
         <label>Repeat Password</label>
-        <input type="password" name="rePassword" placeholder="••••••••" required />
+        <input
+          appInputError
+          type="password"
+          name="rePassword"
+          placeholder="••••••••"
+          formControlName="repeatPassword"
+        />
+        @if (
+          registerForm.errors?.['PasswordsMissmatch'] && registerForm.get('repeatPassword')?.touched
+        ) {
+          <p class="error">Passwords do not match</p>
+        }
       </div>
 
-      <button type="submit" class="login-btn">Create Account</button>
+      <button
+        type="submit"
+        class="login-btn"
+        [disabled]="registerForm.invalid || isLoading"
+      >
+        {{ isLoading ? 'Creating...' : 'Create Account' }}
+      </button>
 
       <div class="login-footer">
         <span>Already have a key?</span>
