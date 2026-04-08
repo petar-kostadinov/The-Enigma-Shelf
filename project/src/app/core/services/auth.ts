@@ -17,6 +17,10 @@ export class AuthService {
     return this.http.post<User>(`${this.apiUrl}/register`, data, { withCredentials: true });
   }
 
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true });
+  }
+
   getProfile(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/users/profile`, { withCredentials: true });
   }

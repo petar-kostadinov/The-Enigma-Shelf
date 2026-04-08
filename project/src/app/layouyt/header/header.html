@@ -2,8 +2,8 @@
   <div class="logo">🕵️‍♂️ The Enigma Shelf</div>
 
   <div class="nav-links">
-    <a href="#">Home</a>
-    <a href="#">Books</a>
+    <a routerLink="/home" routerLinkActive="active">Home</a>
+    <a routerLink="/books" routerLinkActive="active">Books</a>
     <a href="#">About</a>
   </div>
 
@@ -12,9 +12,16 @@
       <input type="text" placeholder="Search books..." />
       <button>🔍</button>
     </div>
-    <div class="auth-buttons">
-      <a routerLink="/login" routerLinkActive="active">Login</a>
-      <a routerLink="/register" routerLinkActive="active">Register</a>
-    </div>
+    @if (authService.userSignal(); as user) {
+      <span>Hello, {{ user.username }}</span>
+      <div class="auth-buttons">
+        <a (click)="onLogout()">Logout</a>
+      </div>
+    } @else {
+      <div class="auth-buttons">
+        <a routerLink="/login" routerLinkActive="active">Login</a>
+        <a routerLink="/register" routerLinkActive="active">Register</a>
+      </div>
+    }
   </div>
 </div>
