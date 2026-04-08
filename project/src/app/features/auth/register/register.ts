@@ -45,9 +45,6 @@ export class RegisterComponent {
   isLoading = false;
 
   onRegister() {
-    console.log('Form submit triggered!');
-    console.log('Form values:', this.registerForm.value);
-
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
@@ -70,19 +67,17 @@ export class RegisterComponent {
         }),
       )
       .subscribe({
-      next: (user) => {
-        this.authService.setSession(user);
-        console.log('Registered:', user);
+        next: (user) => {
+          this.authService.setSession(user);
+          console.log('Registered:', user);
 
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        const message = err?.error?.message || 'Registration error';
-        // Ensure UI updates before showing blocking alert().
-        setTimeout(() => alert(message), 0);
-        console.log(message);
-      },
-    });
-    console.log('Sending to API:', this.registerForm.value);
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          const message = err?.error?.message || 'Registration error';
+          setTimeout(() => alert(message), 0);
+          console.log(message);
+        },
+      });
   }
 }

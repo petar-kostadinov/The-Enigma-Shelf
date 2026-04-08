@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User, UserForAuth } from '../../shared/interfaces/user';
+import { LoginCredentials, User, UserForAuth } from '../../shared/interfaces/user';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +12,10 @@ export class AuthService {
 
   private user = signal<User | null>(null);
   readonly userSignal = this.user.asReadonly();
+
+  login(credentials: LoginCredentials): Observable<User> {
+  return this.http.post<User>(`${this.apiUrl}/login`, credentials, { withCredentials: true });
+}
 
   register(data: UserForAuth): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/register`, data, { withCredentials: true });

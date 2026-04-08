@@ -9,3 +9,8 @@ export interface User {
   email: string;
   username: string;
 }
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
