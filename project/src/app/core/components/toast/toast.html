@@ -1,0 +1,6 @@
+@if (toast().visible) {
+  <div [class]="toastClass()" (click)="hide()">
+    {{ toast().message }}
+  </div>
+}
+

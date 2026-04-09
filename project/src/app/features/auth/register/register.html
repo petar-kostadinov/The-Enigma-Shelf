@@ -67,9 +67,9 @@
       <button
         type="submit"
         class="login-btn"
-        [disabled]="registerForm.invalid || isLoading"
+        [disabled]="registerForm.invalid || isLoading()"
       >
-        {{ isLoading ? 'Creating...' : 'Create Account' }}
+        {{ isLoading() ? 'Creating...' : 'Create Account' }}
       </button>
 
       <div class="login-footer">

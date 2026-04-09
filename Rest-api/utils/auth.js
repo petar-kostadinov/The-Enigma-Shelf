@@ -29,8 +29,9 @@ function auth(redirectUnauthenticated = true) {
                     next();
                     return;
                 }
+                // Missing/invalid token is expected for unauthenticated requests (e.g. app start),
+                // so don't spam the server console with stack traces.
                 if (['token expired', 'blacklisted token', 'jwt must be provided'].includes(err.message)) {
-                    console.error(err);
                     res
                         .status(401)
                         .send({ message: "Invalid token!" });

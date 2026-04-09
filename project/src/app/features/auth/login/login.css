@@ -63,6 +63,21 @@
     box-sizing: border-box;
 }
 
+.input-group input.ng-invalid.ng-touched {
+    border-color: rgba(255, 77, 79, 0.9);
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.18);
+}
+
+.input-group input.ng-invalid.ng-touched::placeholder {
+    color: rgba(255, 77, 79, 0.85);
+}
+
+.input-group .error {
+    margin: 6px 0 0 0;
+    font-size: 11px;
+    color: rgb(255, 77, 79) !important;
+}
+
 /* 5. БУТОН */
 .login-btn {
     width: 100%;
@@ -81,6 +96,17 @@
 .login-btn:hover {
     background: #fff;
     color: #000;
+}
+
+.login-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.35);
+}
+
+.login-btn:disabled:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 /* 6. ФУТЪР НА ФОРМАТА - ТУК Е ПРОМЯНАТА */

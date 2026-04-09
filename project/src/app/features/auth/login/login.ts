@@ -1,8 +1,15 @@
-import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { LoginCredentials } from '../../../shared/interfaces/user';
 import { AuthService } from '../../../core/services/auth';
+import { ToastService } from '../../../core/services/toast';
 import { finalize } from 'rxjs';
 
 const latinLettersAndDigits = /^[a-zA-Z0-9]+$/;
@@ -15,13 +22,10 @@ const latinLettersAndDigits = /^[a-zA-Z0-9]+$/;
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private zone = inject(NgZone);
-  private cdr = inject(ChangeDetectorRef);
-
-
-
+  
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: [
@@ -29,7 +33,7 @@ export class LoginComponent {
       [Validators.required, Validators.minLength(5), Validators.pattern(latinLettersAndDigits)],
     ],
   });
-  isLoading = false;
+  isLoading = signal(false);
 
   onLogin() {
     if (this.loginForm.invalid) {
@@ -41,29 +45,25 @@ export class LoginComponent {
 
     const userData: LoginCredentials = { email, password };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.authService
       .login(userData)
       .pipe(
         finalize(() => {
-          this.zone.run(() => {
-            this.isLoading = false;
-            this.cdr.markForCheck();
-          });
+          this.isLoading.set(false);
         }),
       )
       .subscribe({
         next: (user) => {
           this.authService.setSession(user);
-          console.log('Login:', user);
+          this.toast.show(`Welcome back, ${user.username}!`, 'success');
 
           this.router.navigate(['/']);
         },
         error: (err) => {
           const message = err?.error?.message || 'Login error';
-          setTimeout(() => alert(message), 0);
-          console.log(message);
+          this.toast.show(message, 'error', 4500);
         },
       });
   }

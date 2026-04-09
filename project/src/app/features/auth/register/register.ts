@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
+import { ToastService } from '../../../core/services/toast';
 import { UserForAuth } from '../../../shared/interfaces/user';
 import { passwordsMatchValidator } from '../../../shared/validators/passMatch.validator';
 import { finalize } from 'rxjs';
@@ -22,11 +23,10 @@ const latinLettersAndDigits = /^[a-zA-Z0-9]+$/;
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private zone = inject(NgZone);
-  private cdr = inject(ChangeDetectorRef);
-
+  
   registerForm: FormGroup = this.fb.group(
     {
       username: [
@@ -42,7 +42,7 @@ export class RegisterComponent {
     },
     { validators: passwordsMatchValidator },
   );
-  isLoading = false;
+  isLoading = signal(false);
 
   onRegister() {
     if (this.registerForm.invalid) {
@@ -54,29 +54,25 @@ export class RegisterComponent {
 
     const userData: UserForAuth = { email, username, password };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.authService
       .register(userData)
       .pipe(
         finalize(() => {
-          this.zone.run(() => {
-            this.isLoading = false;
-            this.cdr.markForCheck();
-          });
+          this.isLoading.set(false);
         }),
       )
       .subscribe({
         next: (user) => {
           this.authService.setSession(user);
-          console.log('Registered:', user);
+          this.toast.show('Registration successful!', 'success');
 
           this.router.navigate(['/']);
         },
         error: (err) => {
           const message = err?.error?.message || 'Registration error';
-          setTimeout(() => alert(message), 0);
-          console.log(message);
+          this.toast.show(message, 'error', 4500);
         },
       });
   }
