@@ -29,8 +29,17 @@ app-footer {
   width: 100%;
 }
 
-/* Разпъваме средната част (router-outlet) точно по твоя модел */
-app-root > *:not(app-header):not(app-footer) {
+/* Нотификациите са position:fixed — host-ът не трябва да участва във flex разпределението */
+app-notification {
+  flex: 0 0 auto;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  width: 100%;
+}
+
+/* Разпъваме само основното съдържание (router-outlet), не и overlay компоненти */
+app-root > *:not(app-header):not(app-footer):not(app-notification) {
   display: block;
   flex: 1 0 auto;
 }
@@ -46,10 +55,7 @@ app-root > *:not(app-header):not(app-footer) {
   backdrop-filter: blur(6px);
 }
 
-.logo {
-  font-size: 24px;
-  font-family: 'Cinzel', serif;
-}
+/* Лого + търсачка: стилове в app-header (header.css) */
 
 .nav-links {
   display: flex;
@@ -60,56 +66,6 @@ app-root > *:not(app-header):not(app-footer) {
 }
 
 .nav-links a {
-  color: #ddd;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.nav-links a:hover {
-  color: white;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-search {
-  position: relative;
-}
-
-.nav-search input {
-  padding: 6px 32px 6px 12px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(255, 255, 255, 0.18);
-  color: #f5f5f5;
-  backdrop-filter: blur(6px);
-  transition: 0.3s;
-  width: 180px;
-}
-
-.nav-search input:focus {
-  background: rgba(255, 255, 255, 0.35);
-  outline: none;
-}
-
-.nav-search button {
-  position: absolute;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: rgba(255, 255, 255, 0.18);
-  padding: 5px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #f5f5f5;
-}
-
-/* AUTH BUTTONS (Тук е корекцията за логин/регистър) */
-.auth-buttons a {
   padding: 6px 14px;
   border-radius: 8px;
   text-decoration: none;
@@ -120,9 +76,43 @@ app-root > *:not(app-header):not(app-footer) {
   transition: 0.3s;
 }
 
+.nav-links a:hover {
+  background: rgba(255, 255, 255, 0.35);
+  color: white;
+}
+
+.nav-links a.active {
+  background: rgba(255, 255, 255, 0.42);
+  color: #fff;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* AUTH BUTTONS — стъклени като .nav-links */
+.auth-buttons a {
+  padding: 6px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.18);
+  color: #f5f5f5;
+  backdrop-filter: blur(6px);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
 .auth-buttons a:hover {
   background: rgba(255, 255, 255, 0.35);
   color: white;
+}
+
+.auth-buttons a.active {
+  background: rgba(255, 255, 255, 0.42);
+  color: #fff;
 }
 
 /* ---------------- 4. HERO (Твоите размери) ---------------- */
@@ -200,9 +190,8 @@ app-footer {
         order: 3; /* Слага линковете най-отдолу в набара */
     }
 
-    .logo {
+    .logo-badge {
         order: 1;
-        font-size: 20px;
     }
 
     .nav-right {
@@ -211,8 +200,13 @@ app-footer {
         justify-content: center;
     }
 
-    .nav-search input {
-        width: 140px; /* Малко по-тясно търсене за мобилни */
+    .nav-search--expand .nav-search__input {
+        width: min(100%, 200px);
+        max-width: 100%;
+    }
+
+    .nav-search--expand:focus-within .nav-search__input {
+        width: min(100%, 260px);
     }
 
     /* 2. Логин форма - правим я да заема повече място на екрана */

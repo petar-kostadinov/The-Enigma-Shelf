@@ -1,26 +1,57 @@
 <div class="navbar">
-  <div class="logo">🕵️‍♂️ The Enigma Shelf</div>
+  <a routerLink="/home" class="logo-badge" aria-label="The Enigma Shelf — Home">
+    <span class="logo-badge__icon" aria-hidden="true">🕵️‍♂️</span>
+    <span class="logo-badge__text">
+      <span class="logo-badge__title">The Enigma Shelf</span>
+      <span class="logo-badge__tagline">Books · Mysteries · Archives</span>
+    </span>
+  </a>
 
   <div class="nav-links">
-    <a routerLink="/home" routerLinkActive="active">Home</a>
-    <a routerLink="/books" routerLinkActive="active">Books</a>
+    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a routerLink="/books" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+      >Books</a
+    >
+    @if (authService.userSignal()) {
+      <a
+        routerLink="/books/add"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Add Book</a
+      >
+    }
     <a href="#">About</a>
   </div>
 
   <div class="nav-right">
-    <div class="nav-search">
-      <input type="text" placeholder="Search books..." />
-      <button>🔍</button>
+    <div class="nav-search nav-search--expand">
+      <span class="nav-search__icon" aria-hidden="true">🔍</span>
+      <input type="search" class="nav-search__input" placeholder="Search" autocomplete="off" />
     </div>
     @if (authService.userSignal(); as user) {
       <div class="auth-buttons">
-        <a routerLink="/profile" routerLinkActive="active">Hello, {{ user.username }}</a>
-        <a (click)="onLogout()">Logout</a>
+        <a
+          routerLink="/profile"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="profile-link"
+          >Hello, {{ user.username }}</a
+        >
+        <a (click)="onLogout()" class="logout-link">Logout</a>
       </div>
     } @else {
       <div class="auth-buttons">
-        <a routerLink="/login" routerLinkActive="active">Login</a>
-        <a routerLink="/register" routerLinkActive="active">Register</a>
+        <a routerLink="/login" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+          >Login</a
+        >
+        <a
+          routerLink="/register"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Register</a
+        >
       </div>
     }
   </div>

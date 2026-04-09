@@ -3,6 +3,7 @@
   top: 86px;
   right: 18px;
   z-index: 9999;
+  pointer-events: auto;
   max-width: min(360px, calc(100vw - 36px));
   padding: 12px 14px;
   border-radius: 10px;
