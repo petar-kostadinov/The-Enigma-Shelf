@@ -11,8 +11,7 @@ import { LoginCredentials } from '../../../shared/interfaces/user';
 import { AuthService } from '../../../core/services/auth';
 import { ToastService } from '../../../core/services/toast';
 import { finalize } from 'rxjs';
-
-const latinLettersAndDigits = /^[a-zA-Z0-9]+$/;
+import { latinAlnumValidator } from '../../../shared/validators/latin-alnum.validator';
 
 @Component({
   selector: 'app-login',
@@ -25,13 +24,10 @@ export class LoginComponent {
   private toast = inject(ToastService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  
+
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: [
-      '',
-      [Validators.required, Validators.minLength(5), Validators.pattern(latinLettersAndDigits)],
-    ],
+    password: ['', [Validators.required, Validators.minLength(5), latinAlnumValidator]],
   });
   isLoading = signal(false);
 

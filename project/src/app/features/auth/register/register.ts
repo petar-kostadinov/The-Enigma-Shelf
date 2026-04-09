@@ -12,8 +12,7 @@ import { ToastService } from '../../../core/services/toast';
 import { UserForAuth } from '../../../shared/interfaces/user';
 import { passwordsMatchValidator } from '../../../shared/validators/passMatch.validator';
 import { finalize } from 'rxjs';
-
-const latinLettersAndDigits = /^[a-zA-Z0-9]+$/;
+import { latinAlnumValidator } from '../../../shared/validators/latin-alnum.validator';
 
 @Component({
   selector: 'app-register',
@@ -26,18 +25,12 @@ export class RegisterComponent {
   private toast = inject(ToastService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  
+
   registerForm: FormGroup = this.fb.group(
     {
-      username: [
-        '',
-        [Validators.required, Validators.minLength(5), Validators.pattern(latinLettersAndDigits)],
-      ],
+      username: ['', [Validators.required, Validators.minLength(5), latinAlnumValidator]],
       email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [Validators.required, Validators.minLength(5), Validators.pattern(latinLettersAndDigits)],
-      ],
+      password: ['', [Validators.required, Validators.minLength(5), latinAlnumValidator]],
       repeatPassword: ['', [Validators.required]],
     },
     { validators: passwordsMatchValidator },
