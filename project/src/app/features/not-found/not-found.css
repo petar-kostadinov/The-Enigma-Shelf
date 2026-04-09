@@ -1,0 +1,103 @@
+.not-found-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 140px);
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.not-found-card {
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  padding: 36px 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.not-found-code {
+  margin: 0 0 8px 0;
+  font-family: 'Cinzel', serif;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+}
+
+.not-found-title {
+  margin: 0 0 12px 0;
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.not-found-text {
+  margin: 0 0 28px 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.not-found-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.not-found-btn {
+  display: block;
+  padding: 12px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.not-found-btn--primary {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.not-found-btn--primary:hover {
+  background: rgba(255, 255, 255, 0.26);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.not-found-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.not-found-btn--ghost:hover {
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #fff;
+}
+
+@media (min-width: 480px) {
+  .not-found-actions {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .not-found-btn {
+    flex: 1 1 auto;
+    min-width: 160px;
+  }
+}
