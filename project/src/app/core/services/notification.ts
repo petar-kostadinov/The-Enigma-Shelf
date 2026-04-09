@@ -1,26 +1,26 @@
 import { Injectable, signal } from '@angular/core';
 
-export type ToastKind = 'success' | 'error' | 'info';
+export type NotificationKind = 'success' | 'error' | 'info';
 
-export interface ToastState {
+export interface NotificationState {
   message: string;
-  kind: ToastKind;
+  kind: NotificationKind;
   visible: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
-export class ToastService {
+export class NotificationService {
   private hideTimer: number | null = null;
 
-  private state = signal<ToastState>({
+  private state = signal<NotificationState>({
     message: '',
     kind: 'info',
     visible: false,
   });
 
-  readonly toast = this.state.asReadonly();
+  readonly notification = this.state.asReadonly();
 
-  show(message: string, kind: ToastKind = 'info', ms = 3000): void {
+  show(message: string, kind: NotificationKind = 'info', ms = 3000): void {
     if (this.hideTimer) {
       window.clearTimeout(this.hideTimer);
       this.hideTimer = null;

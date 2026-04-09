@@ -9,7 +9,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { LoginCredentials } from '../../../shared/interfaces/user';
 import { AuthService } from '../../../core/services/auth';
-import { ToastService } from '../../../core/services/toast';
+import { NotificationService } from '../../../core/services/notification';
 import { finalize } from 'rxjs';
 import { latinAlnumValidator } from '../../../shared/validators/latin-alnum.validator';
 
@@ -21,7 +21,7 @@ import { latinAlnumValidator } from '../../../shared/validators/latin-alnum.vali
 })
 export class LoginComponent {
   private authService = inject(AuthService);
-  private toast = inject(ToastService);
+  private notification = inject(NotificationService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
@@ -53,13 +53,13 @@ export class LoginComponent {
       .subscribe({
         next: (user) => {
           this.authService.setSession(user);
-          this.toast.show(`Welcome back, ${user.username}!`, 'success');
+          this.notification.show(`Welcome back, ${user.username}!`, 'success');
 
           this.router.navigate(['/']);
         },
         error: (err) => {
           const message = err?.error?.message || 'Login error';
-          this.toast.show(message, 'error', 4500);
+          this.notification.show(message, 'error', 4500);
         },
       });
   }

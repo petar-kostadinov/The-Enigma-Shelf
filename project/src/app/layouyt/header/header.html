@@ -13,8 +13,8 @@
       <button>🔍</button>
     </div>
     @if (authService.userSignal(); as user) {
-      <span>Hello, {{ user.username }}</span>
       <div class="auth-buttons">
+        <a routerLink="/profile" routerLinkActive="active">Hello, {{ user.username }}</a>
         <a (click)="onLogout()">Logout</a>
       </div>
     } @else {

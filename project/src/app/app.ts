@@ -3,11 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { Header } from './layouyt/header/header';
 import { Footer } from './layouyt/footer/footer';
 import { AuthService } from './core/services/auth';
-import { ToastComponent } from './core/components/toast/toast';
+import { NotificationComponent } from './core/components/notification/notification';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, ToastComponent],
+  imports: [RouterOutlet, Header, Footer, NotificationComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

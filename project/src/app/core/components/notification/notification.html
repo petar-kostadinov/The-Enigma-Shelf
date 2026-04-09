@@ -1,0 +1,6 @@
+@if (notification().visible) {
+  <div [class]="notificationClass()" (click)="hide()">
+    {{ notification().message }}
+  </div>
+}
+

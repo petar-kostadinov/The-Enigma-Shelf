@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
-import { ToastService } from '../../../core/services/toast';
+import { NotificationService } from '../../../core/services/notification';
 import { UserForAuth } from '../../../shared/interfaces/user';
 import { passwordsMatchValidator } from '../../../shared/validators/passMatch.validator';
 import { finalize } from 'rxjs';
@@ -22,7 +22,7 @@ import { latinAlnumValidator } from '../../../shared/validators/latin-alnum.vali
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
-  private toast = inject(ToastService);
+  private notification = inject(NotificationService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
@@ -59,13 +59,13 @@ export class RegisterComponent {
       .subscribe({
         next: (user) => {
           this.authService.setSession(user);
-          this.toast.show('Registration successful!', 'success');
+          this.notification.show('Registration successful!', 'success');
 
           this.router.navigate(['/']);
         },
         error: (err) => {
           const message = err?.error?.message || 'Registration error';
-          this.toast.show(message, 'error', 4500);
+          this.notification.show(message, 'error', 4500);
         },
       });
   }
