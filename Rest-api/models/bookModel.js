@@ -8,6 +8,7 @@ const bookSchema = new mongoose.Schema(
     rating: { type: Number },
     series: { type: String },
     summary: { type: String },
+    imageUrl: { type: String, required: true },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -18,6 +19,17 @@ const bookSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    votes: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        score: { type: Number, min: 1, max: 5, required: true },
+      },
+    ],
+    communityRating: { type: Number },
   },
   { timestamps: true },
 );

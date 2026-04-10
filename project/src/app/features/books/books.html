@@ -2,6 +2,18 @@
   <header class="books-head">
     <h2 class="books-title">Books</h2>
     <p class="books-subtitle">Your shelf of mysteries</p>
+    @if (hasActiveFilter()) {
+      <p class="books-filter-bar">
+        <span class="books-filter-bar__text">Filtered:</span>
+        @if (filterGenre(); as g) {
+          <span class="books-filter-bar__pill">Genre: {{ g }}</span>
+        }
+        @if (filterSeries(); as s) {
+          <span class="books-filter-bar__pill">Series: {{ s }}</span>
+        }
+        <a routerLink="/books" class="books-filter-bar__clear">Show all</a>
+      </p>
+    }
   </header>
 
   @if (isLoading()) {
@@ -9,38 +21,181 @@
       <p class="books-muted">Loading...</p>
     </div>
   } @else {
-    @if (books().length === 0) {
+    @if (allBooks().length === 0) {
       <div class="books-panel books-panel--empty">
         <p class="books-muted">No books yet.</p>
       </div>
+    } @else if (displayedBooks().length === 0) {
+      <div class="books-panel books-panel--empty">
+        <p class="books-muted">No books match this filter.</p>
+        <a routerLink="/books" class="books-filter-empty-link">Show all books</a>
+      </div>
     } @else {
-      <ul class="books-grid">
-        @for (b of books(); track b._id) {
+      @if (totalPages() > 1) {
+        <p class="books-pager-meta" aria-live="polite">
+          Showing
+          {{ (currentPage() - 1) * pageSize + 1 }}–{{
+            Math.min(currentPage() * pageSize, displayedBooks().length)
+          }}
+          of {{ displayedBooks().length }}
+        </p>
+      }
+      <ul class="books-grid" id="books-results-top">
+        @for (b of pagedBooks(); track b._id) {
           <li class="books-card">
+            <div class="books-card__cover-wrap">
+              @if (b.imageUrl) {
+                <img
+                  class="books-card__cover"
+                  [src]="b.imageUrl"
+                  [alt]="'Cover: ' + b.title"
+                  loading="lazy"
+                  decoding="async"
+                />
+              } @else {
+                <div
+                  class="books-card__cover books-card__cover--placeholder"
+                  aria-hidden="true"
+                ></div>
+              }
+            </div>
             <div class="books-card__top">
-              <h3 class="books-card__title">{{ b.title }}</h3>
-              <div class="books-pill">� {{ b.likes.length }}</div>
+              <h3 class="books-card__title">
+                <span class="books-k">Title:</span>
+                {{ b.title }}
+              </h3>
             </div>
 
-            <p class="books-muted">by {{ b.author }}</p>
+            <p class="books-line">
+              <span class="books-k">Author:</span>
+              <span class="books-line__val">{{ b.author }}</span>
+            </p>
 
             <div class="books-meta">
-              <span class="books-chip">{{ b.genre }}</span>
-              @if (b.rating) {
-                <span class="books-chip books-chip--accent">★ {{ b.rating }}/5</span>
+              <div class="books-meta__row books-meta__row--primary">
+                <span class="books-meta__item">
+                  <span class="books-k">Genre:</span>
+                  <a
+                    class="books-chip books-chip--text books-chip--link"
+                    [routerLink]="['/books']"
+                    [queryParams]="{ genre: b.genre }"
+                    title="Show all books in this genre"
+                    >{{ b.genre }}</a
+                  >
+                </span>
+                <span class="books-meta__item">
+                  <span class="books-k">Rating:</span>
+                  @if (b.rating != null) {
+                    <span
+                      class="books-rating books-rating--author"
+                      [attr.aria-label]="'Rating ' + b.rating + ' of 5'"
+                    >
+                      <span class="books-stars" aria-hidden="true">
+                        @for (i of starSlots; track i) {
+                          <span class="books-star" [class.books-star--on]="isStarOn(i, b.rating)">★</span>
+                        }
+                      </span>
+                    </span>
+                  } @else {
+                    <span class="books-dash">—</span>
+                  }
+                </span>
+              </div>
+              @if (b.communityRating != null) {
+                <div class="books-meta__row">
+                  <span class="books-meta__item">
+                    <span class="books-k">Readers:</span>
+                    <span
+                      class="books-rating books-rating--readers"
+                      [attr.aria-label]="'Readers rating ' + b.communityRating + ' of 5'"
+                    >
+                      <span class="books-stars" aria-hidden="true">
+                        @for (i of starSlots; track i) {
+                          <span
+                            class="books-star books-star--reader"
+                            [class.books-star--on-reader]="isStarOn(i, b.communityRating)"
+                            >★</span
+                          >
+                        }
+                      </span>
+                    </span>
+                  </span>
+                </div>
               }
             </div>
 
-            @if (b.series) {
-              <p class="books-chip">{{ b.series }}</p>
-            }
+            <p class="books-line books-line--series">
+              <span class="books-k">Series:</span>
+              @if (b.series) {
+                <a
+                  class="books-chip books-chip--text books-chip--link"
+                  [routerLink]="['/books']"
+                  [queryParams]="{ series: b.series }"
+                  title="Show all books in this series"
+                  >{{ b.series }}</a
+                >
+              } @else {
+                <span class="books-dash">—</span>
+              }
+            </p>
 
             @if (b.summary) {
-              <p class="books-summary">{{ b.summary }}</p>
+              <div class="books-summary-block">
+                <span class="books-k books-k--block">Summary:</span>
+                <p class="books-summary books-summary--clamped">{{ b.summary }}</p>
+              </div>
             }
+
+            <div class="books-card__footer">
+              <button type="button" class="books-read-more" disabled>Read more…</button>
+              @if (!isOwner(b)) {
+                <button
+                  type="button"
+                  class="books-like books-like--footer"
+                  [class.books-like--active]="isLikedByMe(b)"
+                  [disabled]="likeBusyId() === b._id"
+                  (click)="onLike(b, $event)"
+                  [attr.aria-pressed]="isLikedByMe(b)"
+                  [attr.aria-label]="isLikedByMe(b) ? 'Remove your like from this book' : 'Like this book'"
+                >
+                  <svg class="books-like__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M9 21h9a2 2 0 0 0 2-2v-6.76a2 2 0 0 0-.78-1.58l-4.22-3.38a1 1 0 0 1-.38-.79V6.5a1.5 1.5 0 0 0-3 0v1.59a3 3 0 0 1-1.14 2.36L9.3 13.5A2 2 0 0 0 9 14.76V19a2 2 0 0 0 2 2Z"
+                    />
+                    <path
+                      d="M5 21H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1Z"
+                    />
+                  </svg>
+                  <span class="books-like__count">{{ b.likes.length }}</span>
+                </button>
+              }
+            </div>
           </li>
         }
       </ul>
+      @if (totalPages() > 1) {
+        <nav class="books-pager" aria-label="Book list pages">
+          <button
+            type="button"
+            class="books-pager__btn"
+            [disabled]="currentPage() <= 1"
+            (click)="goPrevPage()"
+          >
+            Previous
+          </button>
+          <span class="books-pager__status"
+            >Page {{ currentPage() }} / {{ totalPages() }}</span
+          >
+          <button
+            type="button"
+            class="books-pager__btn"
+            [disabled]="currentPage() >= totalPages()"
+            (click)="goNextPage()"
+          >
+            Next
+          </button>
+        </nav>
+      }
     }
   }
 </section>

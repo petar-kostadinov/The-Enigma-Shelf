@@ -30,6 +30,12 @@ export const routes: Routes = [
 },
 
   {
+    path: 'books/add',
+    loadComponent: () =>
+      import('./features/books/add-book/add-book').then((m) => m.AddBookComponent),
+  },
+
+  {
     path: '**',
     loadComponent: () =>
       import('./features/not-found/not-found').then((m) => m.NotFoundComponent),

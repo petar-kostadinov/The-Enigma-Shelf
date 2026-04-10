@@ -32,8 +32,9 @@
 }
 
 .notification--error {
-  background: rgba(255, 77, 79, 0.16);
-  border-color: rgba(255, 77, 79, 0.45);
+  background: rgba(120, 40, 40, 0.28);
+  border-color: rgba(180, 80, 80, 0.4);
+  color: #fecaca;
 }
 
 .notification--info {

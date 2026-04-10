@@ -11,6 +11,8 @@ router.get('/:bookId', bookController.getBook);
 
 router.put('/:bookId/like', auth(), bookController.likeBook);
 
+router.put('/:bookId/vote', auth(), bookController.rateBook);
+
 // Тук по-късно ще добавим маршрута за коментари
 // router.post('/:bookId/comments', auth(), bookController.addComment);
 

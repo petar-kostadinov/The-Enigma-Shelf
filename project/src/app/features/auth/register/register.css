@@ -64,23 +64,18 @@
 }
 
 .input-group input.ng-invalid.ng-touched {
-    border-color: rgba(255, 45, 45, 0.95);
-    box-shadow:
-        0 0 0 2px rgba(255, 45, 45, 0.35),
-        0 0 14px rgba(255, 40, 40, 0.45);
+    border-color: rgba(180, 80, 80, 0.85);
+    box-shadow: 0 0 0 1px rgba(180, 80, 80, 0.35);
 }
 
 .input-group input.ng-invalid.ng-touched::placeholder {
-    color: rgba(255, 60, 60, 0.95);
+    color: rgba(200, 120, 120, 0.9);
 }
 
 .input-group .error {
     margin: 6px 0 0 0;
     font-size: 13px;
-    color: #ff2b2b !important;
-    text-shadow:
-        0 0 6px rgba(255, 50, 50, 0.85),
-        0 0 14px rgba(255, 30, 30, 0.55);
+    color: #f0a8a8 !important;
 }
 
 /* 5. БУТОН */
