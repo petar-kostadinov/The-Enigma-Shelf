@@ -24,6 +24,12 @@ export const routes: Routes = [
   },
 
   {
+  path: 'books',
+  loadComponent: () =>
+    import('./features/books/books').then((m) => m.BooksComponent),
+},
+
+  {
     path: '**',
     loadComponent: () =>
       import('./features/not-found/not-found').then((m) => m.NotFoundComponent),

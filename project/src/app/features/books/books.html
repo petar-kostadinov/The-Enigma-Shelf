@@ -1,0 +1,46 @@
+<section class="books-shell">
+  <header class="books-head">
+    <h2 class="books-title">Books</h2>
+    <p class="books-subtitle">Your shelf of mysteries</p>
+  </header>
+
+  @if (isLoading()) {
+    <div class="books-panel books-panel--empty">
+      <p class="books-muted">Loading...</p>
+    </div>
+  } @else {
+    @if (books().length === 0) {
+      <div class="books-panel books-panel--empty">
+        <p class="books-muted">No books yet.</p>
+      </div>
+    } @else {
+      <ul class="books-grid">
+        @for (b of books(); track b._id) {
+          <li class="books-card">
+            <div class="books-card__top">
+              <h3 class="books-card__title">{{ b.title }}</h3>
+              <div class="books-pill">� {{ b.likes.length }}</div>
+            </div>
+
+            <p class="books-muted">by {{ b.author }}</p>
+
+            <div class="books-meta">
+              <span class="books-chip">{{ b.genre }}</span>
+              @if (b.rating) {
+                <span class="books-chip books-chip--accent">★ {{ b.rating }}/5</span>
+              }
+            </div>
+
+            @if (b.series) {
+              <p class="books-chip">{{ b.series }}</p>
+            }
+
+            @if (b.summary) {
+              <p class="books-summary">{{ b.summary }}</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

@@ -14,27 +14,30 @@ function getBook(req, res, next) {
   bookModel
     .findById(bookId)
     .populate("owner")
-    .populate({
-      path: "comments",
-      populate: {
-        path: "author",
-      },
-    })
     .then((book) => res.json(book))
     .catch(next);
 }
 
 function createBook(req, res, next) {
-  const { title, author, description } = req.body;
+  const {
+    title,
+    author,
+    summary,
+    genre,
+    rating,
+    series,
+  } = req.body;
   const { _id: owner } = req.user;
 
   bookModel
     .create({
       title,
       author,
-      description,
+      genre,
+      rating,
+      series,
+      summary,
       owner,
-      comments: [],
       likes: [],
     })
     .then((book) => res.status(201).json(book))

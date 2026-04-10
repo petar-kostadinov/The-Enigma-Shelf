@@ -1,24 +1,13 @@
 const mongoose = require("mongoose");
 
-const commentSchema = new mongoose.Schema(
-  {
-    message: {
-      type: String,
-      required: true,
-    },
-    author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  },
-  { timestamps: { createdAt: "created_at" } },
-);
-
 const bookSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     author: { type: String, required: true },
-    description: { type: String },
+    genre: { type: String, required: true },
+    rating: { type: Number },
+    series: { type: String },
+    summary: { type: String },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -29,8 +18,6 @@ const bookSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-
-    comments: [commentSchema],
   },
   { timestamps: true },
 );

@@ -1,0 +1,118 @@
+.books-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 16px 28px;
+  box-sizing: border-box;
+}
+
+.books-head {
+  margin: 10px 0 16px;
+}
+
+.books-title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.books-subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.books-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.books-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+  padding: 16px 16px 14px;
+}
+
+.books-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.books-card__title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.books-pill {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.books-muted {
+  margin: 8px 0 0;
+  color: #aaa;
+  font-size: 15px;
+}
+
+.books-meta {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.books-chip {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #cfcfcf;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.books-chip--accent {
+  color: #fff;
+  border-color: rgba(255, 215, 120, 0.35);
+  background: rgba(255, 215, 120, 0.08);
+}
+
+.books-summary {
+  margin: 12px 0 0;
+  color: #e6e6e6;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.books-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+  padding: 18px 16px;
+}
+
+.books-panel--empty {
+  text-align: center;
+}
