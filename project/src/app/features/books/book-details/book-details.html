@@ -1,0 +1,117 @@
+<section class="bd-shell">
+  <p class="bd-back">
+    <a routerLink="/books" class="bd-back__link">← Back to books</a>
+  </p>
+
+  @if (isLoading()) {
+    <p class="bd-muted">Loading…</p>
+  } @else if (errorMessage()) {
+    <p class="bd-error">{{ errorMessage() }}</p>
+    <a routerLink="/books" class="bd-back__link">Back to books</a>
+  } @else if (book(); as b) {
+    <article class="bd-card">
+      <div class="bd-cover-wrap">
+        @if (b.imageUrl) {
+          <img
+            class="bd-cover"
+            [src]="b.imageUrl"
+            [alt]="'Cover: ' + b.title"
+            loading="eager"
+            decoding="async"
+          />
+        } @else {
+          <div class="bd-cover bd-cover--placeholder" aria-hidden="true"></div>
+        }
+      </div>
+
+      <div class="bd-body">
+        <h1 class="bd-title">{{ b.title }}</h1>
+        <p class="bd-line"><span class="bd-k">Author:</span> {{ b.author }}</p>
+
+        <p class="bd-line">
+          <span class="bd-k">Genre:</span>
+          <a
+            class="bd-chip bd-chip--link"
+            routerLink="/books"
+            [queryParams]="{ genre: b.genre }"
+            >{{ b.genre }}</a
+          >
+        </p>
+
+        @if (b.series) {
+          <p class="bd-line">
+            <span class="bd-k">Series:</span>
+            <a
+              class="bd-chip bd-chip--link"
+              routerLink="/books"
+              [queryParams]="{ series: b.series }"
+              >{{ b.series }}</a
+            >
+          </p>
+        }
+
+        <p class="bd-line">
+          <span class="bd-k">Vote average:</span>
+          @if (b.communityRating != null) {
+            <span
+              class="bd-stars bd-stars--comm"
+              [attr.aria-label]="'Vote average ' + b.communityRating + ' of 5'"
+            >
+              @for (i of starSlots; track i) {
+                <span
+                  class="bd-star bd-star--comm"
+                  [class.bd-star--on-comm]="isStarOn(i, b.communityRating)"
+                  >★</span
+                >
+              }
+            </span>
+            <span class="bd-num">({{ b.communityRating }}/5)</span>
+          } @else {
+            <span class="bd-dash">—</span>
+            <span class="bd-vote-note"> · shown after votes</span>
+          }
+        </p>
+
+        @if (isOwner(b)) {
+          <div class="bd-actions">
+            <button type="button" class="bd-btn bd-btn--edit" (click)="goEdit(b._id)">
+              Edit
+            </button>
+            <button type="button" class="bd-btn bd-btn--delete" (click)="onDelete(b)">
+              Delete
+            </button>
+          </div>
+        } @else if (isLoggedIn()) {
+          <div class="bd-vote">
+            <span class="bd-k">Your vote:</span>
+            @if (myVoteScore(b) != null) {
+              <span class="bd-vote-note">({{ myVoteScore(b) }} / 5) — tap to change</span>
+            }
+            <div class="bd-vote-stars" role="group" aria-label="Rate this book from 1 to 5">
+              @for (i of starSlots; track i) {
+                <button
+                  type="button"
+                  class="bd-vote-star"
+                  [class.bd-vote-star--on]="myVoteScore(b) != null && i <= (myVoteScore(b) ?? 0)"
+                  [disabled]="voteBusy()"
+                  (click)="onVote(b, i)"
+                >
+                  ★
+                </button>
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="bd-hint">Log in to cast your reader vote (1–5).</p>
+        }
+
+        @if (b.summary) {
+          <div class="bd-summary-block">
+            <h2 class="bd-summary-title">Summary</h2>
+            <p class="bd-summary">{{ b.summary }}</p>
+          </div>
+        }
+      </div>
+    </article>
+  }
+</section>
