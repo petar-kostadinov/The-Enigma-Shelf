@@ -1,0 +1,17 @@
+.edit-book-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.edit-book-actions .login-btn--secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #e5e7eb;
+}
+
+.edit-book-actions .login-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

@@ -1,0 +1,77 @@
+<div class="add-book-container">
+  <div class="add-book-box">
+    <h2>Edit book</h2>
+    <p class="add-book-hint">Update the details below</p>
+
+    @if (loadError()) {
+      <p class="error">{{ loadError() }}</p>
+      <a routerLink="/books" class="add-book-hint">Back to books</a>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="input-group">
+          <label for="title">Title</label>
+          <input id="title" type="text" formControlName="title" autocomplete="off" />
+          @if (form.get('title')?.touched && form.get('title')?.invalid) {
+            <p class="error">Title is required (min 2 characters).</p>
+          }
+        </div>
+
+        <div class="input-group">
+          <label for="author">Author</label>
+          <input id="author" type="text" formControlName="author" autocomplete="off" />
+          @if (form.get('author')?.touched && form.get('author')?.invalid) {
+            <p class="error">Author is required (min 2 characters).</p>
+          }
+        </div>
+
+        <div class="input-group">
+          <label for="genre">Genre</label>
+          <input id="genre" type="text" formControlName="genre" autocomplete="off" />
+          @if (form.get('genre')?.touched && form.get('genre')?.invalid) {
+            <p class="error">Genre is required (min 2 characters).</p>
+          }
+        </div>
+
+        <div class="input-group">
+          <label for="series">Series <span class="optional">(optional)</span></label>
+          <input id="series" type="text" formControlName="series" autocomplete="off" />
+        </div>
+
+        <div class="input-group">
+          <label for="imageUrl">Cover image URL</label>
+          <input
+            id="imageUrl"
+            type="url"
+            formControlName="imageUrl"
+            placeholder="https://..."
+            autocomplete="off"
+          />
+          @if (form.get('imageUrl')?.touched && form.get('imageUrl')?.invalid) {
+            <p class="error">A valid http(s) image URL is required (max 2048 characters).</p>
+          }
+        </div>
+
+        <div class="input-group">
+          <label for="summary">Summary <span class="optional">(optional)</span></label>
+          <textarea id="summary" rows="4" formControlName="summary"></textarea>
+          @if (form.get('summary')?.touched && form.get('summary')?.hasError('maxlength')) {
+            <p class="error">Summary is too long (max 2000 characters).</p>
+          }
+        </div>
+
+        <div class="edit-book-actions">
+          <button type="button" class="login-btn login-btn--secondary" (click)="cancel()">
+            Cancel
+          </button>
+          <button type="submit" class="login-btn" [disabled]="isLoading()">
+            @if (isLoading()) {
+              Saving...
+            } @else {
+              Save changes
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
