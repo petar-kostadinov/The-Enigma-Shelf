@@ -34,14 +34,6 @@
       </div>
 
       <div class="input-group">
-        <label for="rating">Rating <span class="optional">(1–5, optional)</span></label>
-        <input id="rating" type="number" min="1" max="5" formControlName="rating" />
-        @if (form.get('rating')?.touched && form.get('rating')?.invalid) {
-          <p class="error">Rating must be between 1 and 5.</p>
-        }
-      </div>
-
-      <div class="input-group">
         <label for="imageUrl">Cover image URL</label>
         <input
           id="imageUrl"

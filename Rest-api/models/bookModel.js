@@ -5,7 +5,6 @@ const bookSchema = new mongoose.Schema(
     title: { type: String, required: true },
     author: { type: String, required: true },
     genre: { type: String, required: true },
-    rating: { type: Number },
     series: { type: String },
     summary: { type: String },
     imageUrl: { type: String, required: true },
@@ -30,6 +29,7 @@ const bookSchema = new mongoose.Schema(
       },
     ],
     communityRating: { type: Number },
+    unread: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

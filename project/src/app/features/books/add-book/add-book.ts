@@ -30,7 +30,6 @@ export class AddBookComponent {
     author: ['', [Validators.required, Validators.minLength(2)]],
     genre: ['', [Validators.required, Validators.minLength(2)]],
     series: [''],
-    rating: [null as number | null, [Validators.min(1), Validators.max(5)]],
     summary: ['', [Validators.maxLength(2000)]],
     imageUrl: [
       '',
@@ -50,14 +49,13 @@ export class AddBookComponent {
       return;
     }
 
-    const { title, author, genre, series, rating, summary, imageUrl } = this.form.value;
+    const { title, author, genre, series, summary, imageUrl } = this.form.value;
 
     const addBook: CreateBook = {
       title,
       author,
       genre,
       series: series?.trim() ? series.trim() : undefined,
-      rating: rating ?? undefined,
       summary: summary?.trim() ? summary.trim() : undefined,
       imageUrl: imageUrl.trim(),
     };

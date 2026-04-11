@@ -1,28 +1,34 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
+  OnDestroy,
+  OnInit,
   signal,
   untracked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BooksService } from '../../core/services/books';
 import { NotificationService } from '../../core/services/notification';
 import { AuthService } from '../../core/services/auth';
 import { Book } from '../../shared/interfaces/book';
-import { finalize, map } from 'rxjs';
+import { FormatDateLabelPipe } from '../../shared/pipes/format-date-label.pipe';
+import { filter, finalize, map, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-books',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormatDateLabelPipe],
   templateUrl: './books.html',
   styleUrl: './books.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BooksComponent {
+export class BooksComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private booksService = inject(BooksService);
   private notification = inject(NotificationService);
   private authService = inject(AuthService);
@@ -80,6 +86,12 @@ export class BooksComponent {
   isLoading = signal(false);
   likeBusyId = signal<string | null>(null);
 
+  private navSub?: Subscription;
+  /** Предишен URL за детекция „връщане от детайл“ → презареждане на списъка (актуален communityRating). */
+  private navPrevUrl = '';
+
+  readonly starSlots = [1, 2, 3, 4, 5] as const;
+
   constructor() {
     effect(() => {
       this.filterGenre();
@@ -97,11 +109,30 @@ export class BooksComponent {
   }
 
   ngOnInit(): void {
+    this.loadBooks();
+
+    this.navSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        const path = e.urlAfterRedirects.split('?')[0];
+        const fromBookDetail = /^\/books\/[^/]+$/.test(this.navPrevUrl);
+        this.navPrevUrl = path;
+        if (path === '/books' && fromBookDetail) {
+          this.loadBooks();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.navSub?.unsubscribe();
+  }
+
+  private loadBooks(): void {
     this.isLoading.set(true);
 
     this.booksService
       .getBooks()
-      .pipe(finalize(() => (this.isLoading.set(false))))
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (books) => {
           this.allBooks.set(books);
@@ -110,6 +141,12 @@ export class BooksComponent {
           this.notification.show('Cannot load books.', 'error', 4500);
         },
       });
+  }
+
+  isStarOn(slot: number, value: number | null | undefined): boolean {
+    if (value == null || Number.isNaN(value)) return false;
+    const r = Math.min(5, Math.max(0, Math.round(Number(value))));
+    return slot <= r;
   }
 
   isLikedByMe(book: Book): boolean {
@@ -124,14 +161,6 @@ export class BooksComponent {
     const oid =
       typeof book.owner === 'object' ? book.owner._id : book.owner;
     return String(oid) === String(uid);
-  }
-
-  readonly starSlots = [1, 2, 3, 4, 5] as const;
-
-  isStarOn(slot: number, rating: number | null | undefined): boolean {
-    if (rating == null || Number.isNaN(rating)) return false;
-    const r = Math.min(5, Math.max(0, Math.round(Number(rating))));
-    return slot <= r;
   }
 
   onLike(book: Book, event: Event): void {

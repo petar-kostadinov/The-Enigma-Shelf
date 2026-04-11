@@ -236,6 +236,12 @@
   margin-top: 4px;
 }
 
+.books-line--added {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
 .books-meta__item {
   display: inline-flex;
   flex-wrap: wrap;
@@ -295,7 +301,8 @@
 .books-like__icon path {
   fill: transparent;
   stroke: currentColor;
-  stroke-width: 1.35;
+  stroke-width: 1.65;
+  stroke-linecap: round;
   stroke-linejoin: round;
   transition:
     fill 0.2s ease,
@@ -501,7 +508,7 @@ a.books-chip--link:focus-visible {
   margin-left: auto;
 }
 
-.books-read-more {
+a.books-read-more {
   display: inline-block;
   padding: 8px 14px;
   font-size: 13px;
@@ -512,11 +519,12 @@ a.books-chip--link:focus-visible {
   border: 1px solid rgba(251, 191, 36, 0.6);
   border-radius: 8px;
   letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.books-read-more:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
+a.books-read-more:hover {
+  filter: brightness(1.06);
 }
 
 .books-panel {

@@ -14,7 +14,6 @@ export interface Book {
   title: string;
   author: string;
   genre: string;
-  rating?: number;
   communityRating?: number | null;
   series?: string;
   summary?: string;
@@ -31,7 +30,14 @@ export interface CreateBook {
   author: string;
   genre: string;
   imageUrl: string;
-  rating?: number;
   series?: string;
   summary?: string;
+  unread?: boolean;
+}
+
+/** Same fields as create; used for PUT /books/:id */
+export type UpdateBook = CreateBook;
+
+export interface Book {
+  unread?: boolean;
 }

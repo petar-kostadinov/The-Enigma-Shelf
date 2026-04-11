@@ -25,7 +25,6 @@ function createBook(req, res, next) {
     author,
     summary,
     genre,
-    rating,
     series,
     imageUrl,
   } = req.body;
@@ -36,7 +35,6 @@ function createBook(req, res, next) {
       title,
       author,
       genre,
-      rating,
       series,
       summary,
       imageUrl,
@@ -157,10 +155,93 @@ function rateBook(req, res, next) {
     });
 }
 
+function updateBook(req, res, next) {
+  const { bookId } = req.params;
+  const { _id: userId } = req.user;
+  const { title, author, summary, genre, series, imageUrl, unread } = req.body;
+
+  bookModel
+    .findById(bookId)
+    .then((book) => {
+      if (!book) {
+        return Promise.reject({ status: 404, message: "Book not found" });
+      }
+      if (String(book.owner) !== String(userId)) {
+        return Promise.reject({
+          status: 403,
+          message: "You can only edit your own books",
+        });
+      }
+      const $set = {
+        title,
+        author,
+        genre,
+        series: series?.trim() ? series.trim() : undefined,
+        summary: summary?.trim() ? summary.trim() : undefined,
+        imageUrl,
+      };
+      if (typeof unread === "boolean") {
+        $set.unread = unread;
+      }
+      return bookModel.findByIdAndUpdate(
+        bookId,
+        { $set },
+        { new: true, runValidators: true },
+      );
+    })
+    .then((updated) => {
+      if (!updated) {
+        return Promise.reject({ status: 404, message: "Book not found" });
+      }
+      return bookModel
+        .findById(updated._id)
+        .populate("owner")
+        .populate({ path: "votes.user", select: "username email" });
+    })
+    .then((book) => res.status(200).json(book))
+    .catch((err) => {
+      if (err?.status) {
+        res.status(err.status).json({ message: err.message });
+        return;
+      }
+      next(err);
+    });
+}
+
+function deleteBook(req, res, next) {
+  const { bookId } = req.params;
+  const { _id: userId } = req.user;
+
+  bookModel
+    .findById(bookId)
+    .then((book) => {
+      if (!book) {
+        return Promise.reject({ status: 404, message: "Book not found" });
+      }
+      if (String(book.owner) !== String(userId)) {
+        return Promise.reject({
+          status: 403,
+          message: "You can only delete your own books",
+        });
+      }
+      return bookModel.deleteOne({ _id: bookId });
+    })
+    .then(() => res.status(204).send())
+    .catch((err) => {
+      if (err?.status) {
+        res.status(err.status).json({ message: err.message });
+        return;
+      }
+      next(err);
+    });
+}
+
 module.exports = {
   getBooks,
   createBook,
   getBook,
   likeBook,
   rateBook,
+  updateBook,
+  deleteBook,
 };
