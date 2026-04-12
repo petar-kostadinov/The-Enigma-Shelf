@@ -129,7 +129,7 @@
 }
 
 .auth-buttons .logout-link {
-  background: rgba(255, 77, 79, 0.16);
+  background: #fbbf24;
   border: 1px solid rgba(255, 77, 79, 0.35);
 }
 

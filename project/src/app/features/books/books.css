@@ -33,29 +33,29 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 12px;
-  font-size: 13px;
+  font-size: 14px;
   color: #d1d5db;
 }
 
 .books-filter-bar__text {
   color: #9ca3af;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.02em;
 }
 
 .books-filter-bar__pill {
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
   border: 1px solid rgba(255, 215, 120, 0.35);
   background: rgba(255, 215, 120, 0.1);
-  font-size: 12px;
+  font-size: 14px;
   color: #fde68a;
 }
 
 .books-filter-bar__clear {
   margin-left: 4px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: #fbbf24;
   text-decoration: none;
@@ -521,10 +521,23 @@ a.books-read-more {
   letter-spacing: 0.02em;
   text-decoration: none;
   cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
 a.books-read-more:hover {
-  filter: brightness(1.06);
+  background: #fde68a;
+  border-color: rgba(253, 230, 138, 0.95);
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4);
+  transform: translateY(-1px);
+}
+
+a.books-read-more:focus-visible {
+  outline: 2px solid #fde68a;
+  outline-offset: 2px;
 }
 
 .books-panel {

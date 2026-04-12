@@ -55,7 +55,7 @@ export class LoginComponent {
           this.authService.setSession(user);
           this.notification.show(`Welcome back, ${user.username}!`, 'success');
 
-          this.router.navigate(['/']);
+          this.router.navigate(['/books']);
         },
         error: (err) => {
           const message = err?.error?.message || 'Login error';
