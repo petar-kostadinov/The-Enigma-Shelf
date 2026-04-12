@@ -4,12 +4,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BooksService } from '../../../core/services/books';
 import { AuthService } from '../../../core/services/auth';
 import { NotificationService } from '../../../core/services/notification';
-import { Book } from '../../../shared/interfaces/book';
+import { Book, UpdateBook } from '../../../shared/interfaces/book';
+import { FormatDateLabelPipe } from '../../../shared/pipes/format-date-label.pipe';
 import { filter, finalize, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-book-details',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormatDateLabelPipe],
   templateUrl: './book-details.html',
   styleUrl: './book-details.css',
 })
@@ -24,6 +25,9 @@ export class BookDetailsComponent implements OnInit {
   isLoading = signal(true);
   errorMessage = signal<string | null>(null);
   voteBusy = signal(false);
+  unreadBusy = signal(false);
+  deleteConfirmVisible = signal(false);
+  deleteBusy = signal(false);
 
   readonly starSlots = [1, 2, 3, 4, 5] as const;
 
@@ -38,6 +42,8 @@ export class BookDetailsComponent implements OnInit {
       )
       .subscribe({
         next: (b) => {
+          this.deleteConfirmVisible.set(false);
+          this.deleteBusy.set(false);
           if (!b?._id) {
             this.errorMessage.set('Book not found.');
             return;
@@ -68,6 +74,11 @@ export class BookDetailsComponent implements OnInit {
     return String(oid) === String(uid);
   }
 
+  /** For template: optional API field */
+  isUnreadMarked(book: Book): boolean {
+    return book.unread === true;
+  }
+
   /** Current user’s reader score for this book, if any. */
   myVoteScore(book: Book): number | null {
     const uid = this.authService.userSignal()?._id;
@@ -83,23 +94,64 @@ export class BookDetailsComponent implements OnInit {
     this.router.navigate(['/books', bookId, 'edit']);
   }
 
-  onDelete(book: Book): void {
-    if (!this.isOwner(book)) return;
-    const ok = confirm(
-      `Delete “${book.title}”? This cannot be undone.`,
-    );
-    if (!ok) return;
+  toggleUnread(book: Book): void {
+    if (!this.isOwner(book) || this.unreadBusy()) return;
+    const unread = !this.isUnreadMarked(book);
 
-    this.bookService.deleteBook(book._id).subscribe({
-      next: () => {
-        this.notification.show('Book deleted.', 'success');
-        this.router.navigate(['/books']);
-      },
-      error: (err) => {
-        const message = err?.error?.message || 'Could not delete book.';
-        this.notification.show(message, 'error', 4500);
-      },
-    });
+    const updateBook: UpdateBook = {
+      title: book.title,
+      author: book.author,
+      genre: book.genre,
+      imageUrl: book.imageUrl ?? '',
+      series: book.series,
+      summary: book.summary,
+      unread,
+    };
+
+    this.unreadBusy.set(true);
+    this.bookService
+      .updateBook(book._id, updateBook)
+      .pipe(finalize(() => this.unreadBusy.set(false)))
+      .subscribe({
+        next: (updated) => this.book.set(updated),
+        error: (err) => {
+          const message = err?.error?.message || 'Could not update.';
+          this.notification.show(message, 'error', 4500);
+        },
+      });
+  }
+
+  openDeleteConfirm(): void {
+    this.deleteConfirmVisible.set(true);
+  }
+
+  cancelDeleteConfirm(): void {
+    if (this.deleteBusy()) return;
+    this.deleteConfirmVisible.set(false);
+  }
+
+  confirmDelete(book: Book): void {
+    if (!this.isOwner(book) || this.deleteBusy()) return;
+
+    this.deleteBusy.set(true);
+    this.bookService
+      .deleteBook(book._id)
+      .pipe(
+        finalize(() => {
+          this.deleteBusy.set(false);
+          this.deleteConfirmVisible.set(false);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.notification.show('Book deleted.', 'success');
+          this.router.navigate(['/books']);
+        },
+        error: (err) => {
+          const message = err?.error?.message || 'Could not delete book.';
+          this.notification.show(message, 'error', 4500);
+        },
+      });
   }
 
   onVote(book: Book, score: number): void {

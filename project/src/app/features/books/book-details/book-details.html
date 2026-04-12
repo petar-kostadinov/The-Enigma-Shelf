@@ -50,8 +50,15 @@
           </p>
         }
 
-        <p class="bd-line">
-          <span class="bd-k">Vote average:</span>
+        @if (b.createdAt) {
+          <p class="bd-line">
+            <span class="bd-k">Added:</span>
+            {{ b.createdAt | formatDateLabel }}
+          </p>
+        }
+
+        <p class="bd-line bd-line--rating">
+          <span class="bd-k">Rating:</span>
           @if (b.communityRating != null) {
             <span
               class="bd-stars bd-stars--comm"
@@ -73,17 +80,83 @@
         </p>
 
         @if (isOwner(b)) {
+                    <div class="bd-owner-tools">
+            <button
+              type="button"
+              class="bd-unread-btn"
+              [class.bd-unread-btn--on]="isUnreadMarked(b)"
+              [disabled]="unreadBusy()"
+              (click)="toggleUnread(b)"
+              [attr.aria-pressed]="isUnreadMarked(b)"
+              [attr.aria-label]="
+                isUnreadMarked(b)
+                  ? 'Marked as unread — click to clear'
+                  : 'Mark as unread'
+              "
+            >
+              <svg
+                class="bd-unread-btn__icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              <span class="bd-unread-btn__label">Mark as unread</span>
+            </button>
+          </div>
           <div class="bd-actions">
             <button type="button" class="bd-btn bd-btn--edit" (click)="goEdit(b._id)">
               Edit
             </button>
-            <button type="button" class="bd-btn bd-btn--delete" (click)="onDelete(b)">
+            <button
+              type="button"
+              class="bd-btn bd-btn--delete"
+              [disabled]="deleteConfirmVisible() || deleteBusy()"
+              (click)="openDeleteConfirm()"
+            >
               Delete
             </button>
           </div>
+          @if (deleteConfirmVisible()) {
+            <div
+              class="bd-delete-confirm"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="bd-delete-confirm-title"
+            >
+              <p id="bd-delete-confirm-title" class="bd-delete-confirm__title">
+                Delete “{{ b.title }}”?
+              </p>
+              <p class="bd-delete-confirm__hint">This cannot be undone.</p>
+              <div class="bd-delete-confirm__actions">
+                <button
+                  type="button"
+                  class="bd-btn bd-btn--cancel-delete"
+                  [disabled]="deleteBusy()"
+                  (click)="cancelDeleteConfirm()"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="bd-btn bd-btn--delete bd-btn--delete-confirm"
+                  [disabled]="deleteBusy()"
+                  (click)="confirmDelete(b)"
+                >
+                  @if (deleteBusy()) {
+                    Deleting…
+                  } @else {
+                    Delete permanently
+                  }
+                </button>
+              </div>
+            </div>
+          }
         } @else if (isLoggedIn()) {
           <div class="bd-vote">
-            <span class="bd-k">Your vote:</span>
+            <span class="bd-k">Vote:</span>
             @if (myVoteScore(b) != null) {
               <span class="bd-vote-note">({{ myVoteScore(b) }} / 5) — tap to change</span>
             }

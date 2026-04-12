@@ -12,7 +12,7 @@ export class NotificationComponent {
 
   notificationClass = computed(() => {
     const n = this.notification();
-    return `notification notification--${n.kind} ${n.visible ? 'notification--visible' : ''}`;
+    return `notification notification--${n.type} ${n.visible ? 'notification--visible' : ''}`;
   });
 
   hide(): void {

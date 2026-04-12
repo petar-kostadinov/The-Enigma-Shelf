@@ -1,12 +1,6 @@
 import { Injectable, signal } from '@angular/core';
+import { NotificationState } from '../../shared/interfaces/notification';
 
-export type NotificationKind = 'success' | 'error' | 'info';
-
-export interface NotificationState {
-  message: string;
-  kind: NotificationKind;
-  visible: boolean;
-}
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -14,19 +8,19 @@ export class NotificationService {
 
   private state = signal<NotificationState>({
     message: '',
-    kind: 'info',
+    type: 'info',
     visible: false,
   });
 
   readonly notification = this.state.asReadonly();
 
-  show(message: string, kind: NotificationKind = 'info', ms = 3000): void {
+  show(message: string, type: NotificationState['type'], ms = 3000): void {
     if (this.hideTimer) {
       window.clearTimeout(this.hideTimer);
       this.hideTimer = null;
     }
 
-    this.state.set({ message, kind, visible: true });
+    this.state.set({ message, type, visible: true });
 
     this.hideTimer = window.setTimeout(() => {
       this.hide();
