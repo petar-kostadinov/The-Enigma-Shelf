@@ -58,24 +58,48 @@
         }
 
         <p class="bd-line bd-line--rating">
-          <span class="bd-k">Rating:</span>
-          @if (b.communityRating != null) {
-            <span
-              class="bd-stars bd-stars--comm"
-              [attr.aria-label]="'Vote average ' + b.communityRating + ' of 5'"
+          <span class="bd-rating-inline">
+            <span class="bd-k">Rating:</span>
+            @if (b.communityRating != null) {
+              <span
+                class="bd-stars bd-stars--comm"
+                [attr.aria-label]="'Vote average ' + b.communityRating + ' of 5'"
+              >
+                @for (i of starSlots; track i) {
+                  <span
+                    class="bd-star bd-star--comm"
+                    [class.bd-star--on-comm]="isStarOn(i, b.communityRating)"
+                    >★</span
+                  >
+                }
+              </span>
+              <span class="bd-num">({{ b.communityRating }}/5)</span>
+            } @else {
+              <span class="bd-dash">—</span>
+              <span class="bd-vote-note"> · shown after votes</span>
+            }
+          </span>
+          @if (!isOwner(b)) {
+            <button
+              type="button"
+              class="books-like books-like--rating-end"
+              [class.books-like--active]="isLikedByMe(b)"
+              [disabled]="likeBusyId() === b._id"
+              (click)="onLike(b, $event)"
+              [attr.aria-pressed]="isLikedByMe(b)"
+              [attr.aria-label]="
+                isLikedByMe(b)
+                  ? 'Remove your like from this book'
+                  : 'Like this book'
+              "
             >
-              @for (i of starSlots; track i) {
-                <span
-                  class="bd-star bd-star--comm"
-                  [class.bd-star--on-comm]="isStarOn(i, b.communityRating)"
-                  >★</span
-                >
-              }
-            </span>
-            <span class="bd-num">({{ b.communityRating }}/5)</span>
-          } @else {
-            <span class="bd-dash">—</span>
-            <span class="bd-vote-note"> · shown after votes</span>
+              <svg class="books-like__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+                />
+              </svg>
+              <span class="books-like__count">{{ b.likes.length }}</span>
+            </button>
           }
         </p>
 

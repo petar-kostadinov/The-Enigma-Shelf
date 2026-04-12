@@ -10,7 +10,7 @@
 }
 
 .bd-back__link {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #fbbf24;
   text-decoration: none;
@@ -98,12 +98,27 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  gap: 10px 12px;
+  justify-content: space-between;
+}
+
+.bd-rating-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px 10px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .bd-line--rating .bd-k {
   margin-right: 0;
   align-self: center;
+}
+
+.books-like--rating-end {
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .bd-dash {
@@ -437,4 +452,72 @@ a.bd-chip--link:hover {
   line-height: 1.65;
   color: #e5e7eb;
   white-space: pre-wrap;
+}
+
+/* Like бутон в един ред с рейтинга (жълт активен вид) */
+.books-like {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.books-like:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.books-like:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.books-like__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.books-like__icon path {
+  fill: transparent;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    fill 0.2s ease,
+    stroke 0.2s ease;
+}
+
+.books-like--active {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.22);
+}
+
+.books-like--active .books-like__icon path {
+  fill: rgba(251, 191, 36, 0.38);
+  stroke: #fbbf24;
+}
+
+.books-like__count {
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.books-like--active .books-like__count {
+  color: #fffbeb;
 }

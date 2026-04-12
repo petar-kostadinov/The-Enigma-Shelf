@@ -28,6 +28,7 @@ export class BookDetailsComponent implements OnInit {
   unreadBusy = signal(false);
   deleteConfirmVisible = signal(false);
   deleteBusy = signal(false);
+  likeBusyId = signal<string | null>(null);
 
   readonly starSlots = [1, 2, 3, 4, 5] as const;
 
@@ -72,6 +73,41 @@ export class BookDetailsComponent implements OnInit {
     const oid =
       typeof book.owner === 'object' ? book.owner._id : book.owner;
     return String(oid) === String(uid);
+  }
+
+  isLikedByMe(book: Book): boolean {
+    const uid = this.authService.userSignal()?._id;
+    if (!uid) return false;
+    return book.likes.some((id) => String(id) === String(uid));
+  }
+
+  onLike(book: Book, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!this.authService.userSignal()) {
+      this.notification.show('Log in to like books.', 'info', 3500);
+      return;
+    }
+
+    if (this.isOwner(book)) {
+      this.notification.show('You cannot like your own book.', 'info', 3500);
+      return;
+    }
+
+    this.likeBusyId.set(book._id);
+    this.bookService.toggleLikeBook(book._id).subscribe({
+      next: (updated) => {
+        this.book.set(updated);
+        this.likeBusyId.set(null);
+      },
+      error: (err) => {
+        this.likeBusyId.set(null);
+        const message =
+          err?.error?.message || 'Could not update your like on this book.';
+        this.notification.show(message, 'error', 4500);
+      },
+    });
   }
 
   /** For template: optional API field */
