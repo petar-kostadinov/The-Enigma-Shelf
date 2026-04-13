@@ -1,0 +1,133 @@
+<div class="books-card__cover-wrap">
+  @if (book.imageUrl) {
+    <img
+      class="books-card__cover"
+      [src]="book.imageUrl"
+      [alt]="'Cover: ' + book.title"
+      loading="lazy"
+      decoding="async"
+    />
+  } @else {
+    <div class="books-card__cover books-card__cover--placeholder" aria-hidden="true"></div>
+  }
+</div>
+<div class="books-card__top">
+  <h3 class="books-card__title">
+    <span class="books-k">Title:</span>
+    {{ book.title }}
+  </h3>
+</div>
+
+<p class="books-line">
+  <span class="books-k">Author:</span>
+  <span class="books-line__val">{{ book.author }}</span>
+</p>
+
+<div class="books-meta">
+  <div class="books-meta__row books-meta__row--primary">
+    <span class="books-meta__item">
+      <span class="books-k">Genre:</span>
+      <a
+        class="books-chip books-chip--text books-chip--link"
+        [routerLink]="fromMyBooks ? '/my-books' : '/books'"
+        [queryParams]="{ genre: book.genre }"
+        [attr.title]="
+          fromMyBooks
+            ? 'Show your books in this genre'
+            : 'Show all books in this genre'
+        "
+        >{{ book.genre }}</a
+      >
+    </span>
+    <span class="books-meta__item">
+      <span class="books-k">Rating:</span>
+      @if (book.communityRating != null) {
+        <span
+          class="books-rating books-rating--author"
+          [attr.aria-label]="'Rating ' + book.communityRating + ' of 5'"
+        >
+          <span class="books-stars" aria-hidden="true">
+            @for (i of starSlots; track i) {
+              <span
+                class="books-star"
+                [class.books-star--on]="isStarOn(i, book.communityRating)"
+                >★</span
+              >
+            }
+          </span>
+        </span>
+      } @else {
+        <span class="books-dash">—</span>
+      }
+    </span>
+  </div>
+</div>
+
+<p class="books-line books-line--series">
+  <span class="books-k">Series:</span>
+  @if (book.series) {
+    <a
+      class="books-chip books-chip--text books-chip--link"
+      [routerLink]="fromMyBooks ? '/my-books' : '/books'"
+      [queryParams]="{ series: book.series }"
+      [attr.title]="
+        fromMyBooks
+          ? 'Show your books in this series'
+          : 'Show all books in this series'
+      "
+      >{{ book.series }}</a
+    >
+  } @else {
+    <span class="books-dash">—</span>
+  }
+</p>
+
+@if (book.createdAt) {
+  <p class="books-line books-line--added">
+    <span class="books-k">Added:</span>
+    {{ book.createdAt | formatDateLabel }}
+  </p>
+}
+
+@if (book.summary) {
+  <div class="books-summary-block">
+    <span class="books-k books-k--block">Summary:</span>
+    <p class="books-summary books-summary--clamped">{{ book.summary }}</p>
+  </div>
+}
+
+<div class="books-card__footer">
+  <a
+    class="books-read-more"
+    [routerLink]="['/books', book._id]"
+    [queryParams]="fromMyBooks ? { from: 'my-books' } : undefined"
+    >Read more…</a
+  >
+  @if (showLikeButton) {
+    <button
+      type="button"
+      class="books-like books-like--footer"
+      [class.books-like--active]="likedByMe"
+      [disabled]="likeBusy"
+      (click)="onLikeButtonClick($event)"
+      [attr.aria-pressed]="likedByMe"
+      [attr.aria-label]="
+        likedByMe ? 'Remove your like from this book' : 'Like this book'
+      "
+    >
+      <svg class="books-like__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+        />
+      </svg>
+      <span class="books-like__count">{{ book.likes.length }}</span>
+    </button>
+  } @else if (showEditButton) {
+    <a
+      class="books-read-more book-card__edit-btn"
+      [routerLink]="['/books', book._id, 'edit']"
+      [queryParams]="fromMyBooks ? { from: 'my-books' } : undefined"
+      >Edit</a
+    >
+  }
+</div>
