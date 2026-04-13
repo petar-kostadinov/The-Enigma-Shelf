@@ -43,6 +43,12 @@ export const routes: Routes = [
   },
 
   {
+    path: 'my-books',
+    loadComponent: () =>
+      import('./features/profile/my-books/my-books').then((m) => m.MyBooksComponent),
+  },
+
+  {
     path: '**',
     loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFoundComponent),
   },
