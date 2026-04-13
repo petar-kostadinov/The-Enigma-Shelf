@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BooksService } from '../../../core/services/books';
 import { AuthService } from '../../../core/services/auth';
@@ -7,6 +8,14 @@ import { NotificationService } from '../../../core/services/notification';
 import { Book, UpdateBook } from '../../../shared/interfaces/book';
 import { FormatDateLabelPipe } from '../../../shared/pipes/format-date-label.pipe';
 import { filter, finalize, map, switchMap } from 'rxjs';
+
+const MY_BOOKS_FROM = 'my-books' as const;
+
+function isUnreadQueryParam(v: string | null): boolean {
+  if (v == null) return false;
+  const s = v.trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes';
+}
 
 @Component({
   selector: 'app-book-details',
@@ -31,6 +40,55 @@ export class BookDetailsComponent implements OnInit {
   likeBusyId = signal<string | null>(null);
 
   readonly starSlots = [1, 2, 3, 4, 5] as const;
+
+  private fromMyBooksContext = toSignal(
+    this.route.queryParamMap.pipe(
+      map((m) => m.get('from') === MY_BOOKS_FROM),
+    ),
+    { initialValue: false },
+  );
+
+  private fromUnreadFilter = toSignal(
+    this.route.queryParamMap.pipe(map((m) => isUnreadQueryParam(m.get('unread')))),
+    { initialValue: false },
+  );
+
+  booksListPath = computed(() =>
+    this.fromMyBooksContext() ? '/my-books' : '/books',
+  );
+
+  booksListBackLabel = computed(() =>
+    this.fromMyBooksContext() ? '← Back to my books' : '← Back to books',
+  );
+
+  booksListBackLabelPlain = computed(() =>
+    this.fromMyBooksContext() ? 'Back to my books' : 'Back to books',
+  );
+
+  booksListReturnQueryParams(): Record<string, string> | undefined {
+    if (this.fromMyBooksContext() && this.fromUnreadFilter()) {
+      return { unread: '1' };
+    }
+    return undefined;
+  }
+
+  listFilterChipQueryParams(
+    kind: 'genre' | 'series',
+    value: string,
+  ): Record<string, string> {
+    const q: Record<string, string> =
+      kind === 'genre' ? { genre: value } : { series: value };
+    if (this.fromMyBooksContext() && this.fromUnreadFilter()) {
+      q['unread'] = '1';
+    }
+    return q;
+  }
+
+  private myBooksFlowQueryParams(): Record<string, string> {
+    const q: Record<string, string> = { from: MY_BOOKS_FROM };
+    if (this.fromUnreadFilter()) q['unread'] = '1';
+    return q;
+  }
 
   ngOnInit(): void {
     this.route.paramMap
@@ -127,7 +185,10 @@ export class BookDetailsComponent implements OnInit {
   }
 
   goEdit(bookId: string): void {
-    this.router.navigate(['/books', bookId, 'edit']);
+    const extras = this.fromMyBooksContext()
+      ? { queryParams: this.myBooksFlowQueryParams() }
+      : {};
+    void this.router.navigate(['/books', bookId, 'edit'], extras);
   }
 
   toggleUnread(book: Book): void {
@@ -181,7 +242,12 @@ export class BookDetailsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.notification.show('Book deleted.', 'success');
-          this.router.navigate(['/books']);
+          if (this.fromMyBooksContext()) {
+            const qp = this.fromUnreadFilter() ? { queryParams: { unread: '1' } } : {};
+            void this.router.navigate(['/my-books'], qp);
+          } else {
+            void this.router.navigate(['/books']);
+          }
         },
         error: (err) => {
           const message = err?.error?.message || 'Could not delete book.';

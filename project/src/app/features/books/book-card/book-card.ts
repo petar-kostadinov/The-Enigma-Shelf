@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Book } from '../../../shared/interfaces/book';
 import { FormatDateLabelPipe } from '../../../shared/pipes/format-date-label.pipe';
@@ -33,6 +27,9 @@ export class BookCardComponent {
   /** Линковете към детайл/редакция носят `?from=my-books` за правилен „Back“. */
   @Input() fromMyBooks = false;
 
+  /** Допълнителни query параметри за /my-books (напр. `unread=1`). */
+  @Input() myBooksQueryExtras: Record<string, string> | null = null;
+
   @Output() likeClick = new EventEmitter<Book>();
 
   readonly starSlots = [1, 2, 3, 4, 5] as const;
@@ -47,5 +44,28 @@ export class BookCardComponent {
     event.preventDefault();
     event.stopPropagation();
     this.likeClick.emit(this.book);
+  }
+
+  genreListQueryParams(): Record<string, string> {
+    const q: Record<string, string> = { genre: this.book.genre };
+    if (this.fromMyBooks && this.myBooksQueryExtras) {
+      Object.assign(q, this.myBooksQueryExtras);
+    }
+    return q;
+  }
+
+  seriesListQueryParams(): Record<string, string> {
+    const q: Record<string, string> = { series: this.book.series ?? '' };
+    if (this.fromMyBooks && this.myBooksQueryExtras) {
+      Object.assign(q, this.myBooksQueryExtras);
+    }
+    return q;
+  }
+
+  detailQueryParams(): Record<string, string> | undefined {
+    if (!this.fromMyBooks) return undefined;
+    const q: Record<string, string> = { from: 'my-books' };
+    if (this.myBooksQueryExtras) Object.assign(q, this.myBooksQueryExtras);
+    return q;
   }
 }

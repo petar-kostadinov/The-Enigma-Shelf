@@ -122,10 +122,91 @@
   gap: 10px;
 }
 
+/* Профил: клик по иконата отваря/затваря подменю (само визуално) */
+.nav-profile {
+  position: relative;
+}
+
+.nav-profile > summary.profile-link {
+  list-style: none;
+  cursor: pointer;
+}
+
+.nav-profile > summary.profile-link::-webkit-details-marker {
+  display: none;
+}
+
+.nav-profile > summary.profile-link::marker {
+  content: '';
+}
+
 .auth-buttons .profile-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 999px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.18);
+  color: #f5f5f5;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-weight: bold;
+}
+
+.nav-profile[open] > summary.profile-link {
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.45);
+}
+
+.nav-profile__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 168px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(22, 22, 28, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5);
+  z-index: 250;
+}
+
+.nav-profile__item {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f3f4f6;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.nav-profile__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.auth-buttons .profile-link__icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .auth-buttons .logout-link {
@@ -138,4 +219,3 @@
   border-color: rgba(255, 77, 79, 0.55);
   color: #fff;
 }
-

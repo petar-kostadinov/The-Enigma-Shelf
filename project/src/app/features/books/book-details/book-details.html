@@ -1,13 +1,23 @@
 <section class="bd-shell">
   <p class="bd-back">
-    <a routerLink="/books" class="bd-back__link">← Back to books</a>
+    <a
+      [routerLink]="booksListPath()"
+      [queryParams]="booksListReturnQueryParams()"
+      class="bd-back__link"
+      >{{ booksListBackLabel() }}</a
+    >
   </p>
 
   @if (isLoading()) {
     <p class="bd-muted">Loading…</p>
   } @else if (errorMessage()) {
     <p class="bd-error">{{ errorMessage() }}</p>
-    <a routerLink="/books" class="bd-back__link">Back to books</a>
+    <a
+      [routerLink]="booksListPath()"
+      [queryParams]="booksListReturnQueryParams()"
+      class="bd-back__link"
+      >{{ booksListBackLabelPlain() }}</a
+    >
   } @else if (book(); as b) {
     <article class="bd-card">
       <div class="bd-cover-wrap">
@@ -32,8 +42,8 @@
           <span class="bd-k">Genre:</span>
           <a
             class="bd-chip bd-chip--link"
-            routerLink="/books"
-            [queryParams]="{ genre: b.genre }"
+            [routerLink]="booksListPath()"
+            [queryParams]="listFilterChipQueryParams('genre', b.genre)"
             >{{ b.genre }}</a
           >
         </p>
@@ -43,8 +53,8 @@
             <span class="bd-k">Series:</span>
             <a
               class="bd-chip bd-chip--link"
-              routerLink="/books"
-              [queryParams]="{ series: b.series }"
+              [routerLink]="booksListPath()"
+              [queryParams]="listFilterChipQueryParams('series', b.series)"
               >{{ b.series }}</a
             >
           </p>

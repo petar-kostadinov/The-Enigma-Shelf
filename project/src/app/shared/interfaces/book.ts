@@ -23,6 +23,8 @@ export interface Book {
   votes?: BookVote[];
   createdAt?: string;
   updatedAt?: string;
+  /** Само за собственика: маркер „още не съм я чел/ял“. */
+  unread?: boolean;
 }
 
 export interface CreateBook {
@@ -37,7 +39,3 @@ export interface CreateBook {
 
 /** Same fields as create; used for PUT /books/:id */
 export type UpdateBook = CreateBook;
-
-export interface Book {
-  unread?: boolean;
-}

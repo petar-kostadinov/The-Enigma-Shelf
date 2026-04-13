@@ -53,48 +53,16 @@
       >
     </div>
   } @else {
-    @if (totalPages() > 1) {
-      <p class="books-pager-meta" aria-live="polite">
-        Showing
-        {{ (currentPage() - 1) * pageSize + 1 }}–{{
-          Math.min(currentPage() * pageSize, displayedMyBooks().length)
-        }}
-        of {{ displayedMyBooks().length }}
-      </p>
-    }
     <ul class="books-grid">
-      @for (b of pagedMyBooks(); track b._id) {
+      @for (b of displayedMyBooks(); track b._id) {
         <app-book-card
           [book]="b"
           [showLikeButton]="false"
           [showEditButton]="true"
           [fromMyBooks]="true"
-          [myBooksQueryExtras]="myBooksQueryExtras()"
+          [myBooksQueryExtras]="bookCardUrlExtras()"
         />
       }
     </ul>
-    @if (totalPages() > 1) {
-      <nav class="books-pager" aria-label="My book list pages">
-        <button
-          type="button"
-          class="books-pager__btn"
-          [disabled]="currentPage() <= 1"
-          (click)="goPrevPage()"
-        >
-          Previous
-        </button>
-        <span class="books-pager__status"
-          >Page {{ currentPage() }} / {{ totalPages() }}</span
-        >
-        <button
-          type="button"
-          class="books-pager__btn"
-          [disabled]="currentPage() >= totalPages()"
-          (click)="goNextPage()"
-        >
-          Next
-        </button>
-      </nav>
-    }
   }
 </section>

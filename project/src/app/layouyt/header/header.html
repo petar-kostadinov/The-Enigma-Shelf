@@ -22,7 +22,9 @@
         >Add Book</a
       >
     }
-    <a href="#">About</a>
+    <a routerLink="/about" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+      >About</a
+    >
   </div>
 
   <div class="nav-right">
@@ -32,13 +34,38 @@
     </div>
     @if (authService.userSignal(); as user) {
       <div class="auth-buttons">
-        <a
-          routerLink="/profile"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="profile-link"
-          >Hello, {{ user.username }}</a
-        >
+        <details class="nav-profile" #profileMenu>
+          <summary
+            class="profile-link"
+            [attr.aria-label]="'Open profile menu, signed in as ' + user.username"
+            [attr.title]="user.username"
+          >
+            <svg
+              class="profile-link__icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </summary>
+          <div class="nav-profile__panel" role="group" aria-label="Profile menu (preview)">
+            <button type="button" class="nav-profile__item" (click)="closeProfileMenu(profileMenu)">
+              Account
+            </button>
+            <a
+              routerLink="/my-books"
+              class="nav-profile__item"
+              (click)="closeProfileMenu(profileMenu)"
+              >My books</a
+            >
+          </div>
+        </details>
         <a (click)="onLogout()" class="logout-link">Logout</a>
       </div>
     } @else {

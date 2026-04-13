@@ -14,6 +14,14 @@ import { BooksService } from '../../../core/services/books';
 import { NotificationService } from '../../../core/services/notification';
 import { CreateBook } from '../../../shared/interfaces/book';
 
+const MY_BOOKS_FROM = 'my-books' as const;
+
+function isUnreadQueryParam(v: string | null): boolean {
+  if (v == null) return false;
+  const s = v.trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes';
+}
+
 @Component({
   selector: 'app-edit-book',
   imports: [ReactiveFormsModule, FormsModule, RouterLink],
@@ -46,8 +54,28 @@ export class EditBookComponent implements OnInit {
   isLoading = signal(false);
   loadError = signal<string | null>(null);
   private bookId = '';
+  /** Запазва се от URL при отваряне от „My books“. */
+  fromMyBooksRoute = false;
+  /** Филтър „непрочетени“ в my-books, ако е в URL заедно с from. */
+  unreadMyBooksRoute = false;
+
+  private buildMyBooksDetailQueryParams(): Record<string, string> {
+    const q: Record<string, string> = { from: MY_BOOKS_FROM };
+    if (this.unreadMyBooksRoute) q['unread'] = '1';
+    return q;
+  }
+
+  myBooksListOnlyQueryParams(): Record<string, string> | undefined {
+    if (!this.fromMyBooksRoute) return undefined;
+    return this.unreadMyBooksRoute ? { unread: '1' } : undefined;
+  }
 
   ngOnInit(): void {
+    this.fromMyBooksRoute =
+      this.route.snapshot.queryParamMap.get('from') === MY_BOOKS_FROM;
+    this.unreadMyBooksRoute =
+      this.fromMyBooksRoute &&
+      isUnreadQueryParam(this.route.snapshot.queryParamMap.get('unread'));
     this.route.paramMap
       .pipe(
         map((p) => p.get('bookId')),
@@ -101,7 +129,10 @@ export class EditBookComponent implements OnInit {
       .subscribe({
         next: () => {
           this.notification.show('Book updated.', 'success');
-          this.router.navigate(['/books', this.bookId]);
+          const extras = this.fromMyBooksRoute
+            ? { queryParams: this.buildMyBooksDetailQueryParams() }
+            : {};
+          void this.router.navigate(['/books', this.bookId], extras);
         },
         error: (err) => {
           const message = err?.error?.message || 'Could not update book.';
@@ -111,10 +142,16 @@ export class EditBookComponent implements OnInit {
   }
 
   cancel(): void {
+    const extras = this.fromMyBooksRoute
+      ? { queryParams: this.buildMyBooksDetailQueryParams() }
+      : {};
     if (this.bookId) {
-      this.router.navigate(['/books', this.bookId]);
+      void this.router.navigate(['/books', this.bookId], extras);
     } else {
-      this.router.navigate(['/books']);
+      const dest = this.fromMyBooksRoute ? '/my-books' : '/books';
+      const listQp = this.myBooksListOnlyQueryParams();
+      const listExtras = listQp ? { queryParams: listQp } : {};
+      void this.router.navigate([dest], listExtras);
     }
   }
 }

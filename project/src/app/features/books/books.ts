@@ -2,12 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   OnDestroy,
   OnInit,
   signal,
-  untracked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
@@ -16,12 +14,13 @@ import { BooksService } from '../../core/services/books';
 import { NotificationService } from '../../core/services/notification';
 import { AuthService } from '../../core/services/auth';
 import { Book } from '../../shared/interfaces/book';
-import { FormatDateLabelPipe } from '../../shared/pipes/format-date-label.pipe';
 import { filter, finalize, map, Subscription } from 'rxjs';
+import { BookCardComponent } from './book-card/book-card';
 
 @Component({
   selector: 'app-books',
-  imports: [CommonModule, RouterLink, FormatDateLabelPipe],
+  standalone: true,
+  imports: [BookCardComponent, CommonModule, RouterLink],
   templateUrl: './books.html',
   styleUrl: './books.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,52 +60,12 @@ export class BooksComponent implements OnInit, OnDestroy {
     () => this.filterGenre() != null || this.filterSeries() != null,
   );
 
-  /** За шаблона: диапазон „показване X–Y от Z“. */
-  readonly Math = Math;
-
-  /** Брой карти на страница (промени при нужда: 6 или 8). */
-  readonly pageSize = 8;
-  currentPage = signal(1);
-
-  totalPages = computed(() => {
-    const n = this.displayedBooks().length;
-    return Math.max(1, Math.ceil(n / this.pageSize));
-  });
-
-  pagedBooks = computed(() => {
-    const list = this.displayedBooks();
-    const page = Math.min(
-      Math.max(1, this.currentPage()),
-      this.totalPages(),
-    );
-    const start = (page - 1) * this.pageSize;
-    return list.slice(start, start + this.pageSize);
-  });
-
   isLoading = signal(false);
   likeBusyId = signal<string | null>(null);
 
   private navSub?: Subscription;
   /** Предишен URL за детекция „връщане от детайл“ → презареждане на списъка (актуален communityRating). */
   private navPrevUrl = '';
-
-  readonly starSlots = [1, 2, 3, 4, 5] as const;
-
-  constructor() {
-    effect(() => {
-      this.filterGenre();
-      this.filterSeries();
-      untracked(() => this.currentPage.set(1));
-    });
-    effect(() => {
-      const tp = this.totalPages();
-      untracked(() => {
-        if (this.currentPage() > tp) {
-          this.currentPage.set(tp);
-        }
-      });
-    });
-  }
 
   ngOnInit(): void {
     this.loadBooks();
@@ -143,12 +102,6 @@ export class BooksComponent implements OnInit, OnDestroy {
       });
   }
 
-  isStarOn(slot: number, value: number | null | undefined): boolean {
-    if (value == null || Number.isNaN(value)) return false;
-    const r = Math.min(5, Math.max(0, Math.round(Number(value))));
-    return slot <= r;
-  }
-
   isLikedByMe(book: Book): boolean {
     const uid = this.authService.userSignal()?._id;
     if (!uid) return false;
@@ -163,10 +116,7 @@ export class BooksComponent implements OnInit, OnDestroy {
     return String(oid) === String(uid);
   }
 
-  onLike(book: Book, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-
+  onLike(book: Book): void {
     if (!this.authService.userSignal()) {
       this.notification.show('Log in to like books.', 'info', 3500);
       return;
@@ -192,14 +142,5 @@ export class BooksComponent implements OnInit, OnDestroy {
         this.notification.show(message, 'error', 4500);
       },
     });
-  }
-
-  goPrevPage(): void {
-    this.currentPage.update((p) => Math.max(1, p - 1));
-  }
-
-  goNextPage(): void {
-    const max = this.totalPages();
-    this.currentPage.update((p) => Math.min(max, p + 1));
   }
 }

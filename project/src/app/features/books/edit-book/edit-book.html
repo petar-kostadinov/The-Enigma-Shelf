@@ -5,7 +5,12 @@
 
     @if (loadError()) {
       <p class="error">{{ loadError() }}</p>
-      <a routerLink="/books" class="add-book-hint">Back to books</a>
+      <a
+        [routerLink]="fromMyBooksRoute ? '/my-books' : '/books'"
+        [queryParams]="myBooksListOnlyQueryParams()"
+        class="add-book-hint"
+        >{{ fromMyBooksRoute ? 'Back to my books' : 'Back to books' }}</a
+      >
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="input-group">

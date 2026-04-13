@@ -31,158 +31,17 @@
         <a routerLink="/books" class="books-filter-empty-link">Show all books</a>
       </div>
     } @else {
-      @if (totalPages() > 1) {
-        <p class="books-pager-meta" aria-live="polite">
-          Showing
-          {{ (currentPage() - 1) * pageSize + 1 }}–{{
-            Math.min(currentPage() * pageSize, displayedBooks().length)
-          }}
-          of {{ displayedBooks().length }}
-        </p>
-      }
       <ul class="books-grid" id="books-results-top">
-        @for (b of pagedBooks(); track b._id) {
-          <li class="books-card">
-            <div class="books-card__cover-wrap">
-              @if (b.imageUrl) {
-                <img
-                  class="books-card__cover"
-                  [src]="b.imageUrl"
-                  [alt]="'Cover: ' + b.title"
-                  loading="lazy"
-                  decoding="async"
-                />
-              } @else {
-                <div
-                  class="books-card__cover books-card__cover--placeholder"
-                  aria-hidden="true"
-                ></div>
-              }
-            </div>
-            <div class="books-card__top">
-              <h3 class="books-card__title">
-                <span class="books-k">Title:</span>
-                {{ b.title }}
-              </h3>
-            </div>
-
-            <p class="books-line">
-              <span class="books-k">Author:</span>
-              <span class="books-line__val">{{ b.author }}</span>
-            </p>
-
-            <div class="books-meta">
-              <div class="books-meta__row books-meta__row--primary">
-                <span class="books-meta__item">
-                  <span class="books-k">Genre:</span>
-                  <a
-                    class="books-chip books-chip--text books-chip--link"
-                    [routerLink]="['/books']"
-                    [queryParams]="{ genre: b.genre }"
-                    title="Show all books in this genre"
-                    >{{ b.genre }}</a
-                  >
-                </span>
-                <span class="books-meta__item">
-                  <span class="books-k">Rating:</span>
-                  @if (b.communityRating != null) {
-                    <span
-                      class="books-rating books-rating--author"
-                      [attr.aria-label]="'Rating ' + b.communityRating + ' of 5'"
-                    >
-                      <span class="books-stars" aria-hidden="true">
-                        @for (i of starSlots; track i) {
-                          <span
-                            class="books-star"
-                            [class.books-star--on]="isStarOn(i, b.communityRating)"
-                            >★</span
-                          >
-                        }
-                      </span>
-                    </span>
-                  } @else {
-                    <span class="books-dash">—</span>
-                  }
-                </span>
-              </div>
-            </div>
-
-            <p class="books-line books-line--series">
-              <span class="books-k">Series:</span>
-              @if (b.series) {
-                <a
-                  class="books-chip books-chip--text books-chip--link"
-                  [routerLink]="['/books']"
-                  [queryParams]="{ series: b.series }"
-                  title="Show all books in this series"
-                  >{{ b.series }}</a
-                >
-              } @else {
-                <span class="books-dash">—</span>
-              }
-            </p>
-
-            @if (b.createdAt) {
-              <p class="books-line books-line--added">
-                <span class="books-k">Added:</span>
-                {{ b.createdAt | formatDateLabel }}
-              </p>
-            }
-
-            @if (b.summary) {
-              <div class="books-summary-block">
-                <span class="books-k books-k--block">Summary:</span>
-                <p class="books-summary books-summary--clamped">{{ b.summary }}</p>
-              </div>
-            }
-
-            <div class="books-card__footer">
-              <a class="books-read-more" [routerLink]="['/books', b._id]">Read more…</a>
-              @if (!isOwner(b)) {
-                <button
-                  type="button"
-                  class="books-like books-like--footer"
-                  [class.books-like--active]="isLikedByMe(b)"
-                  [disabled]="likeBusyId() === b._id"
-                  (click)="onLike(b, $event)"
-                  [attr.aria-pressed]="isLikedByMe(b)"
-                  [attr.aria-label]="isLikedByMe(b) ? 'Remove your like from this book' : 'Like this book'"
-                >
-                  <svg class="books-like__icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
-                    />
-                  </svg>
-                  <span class="books-like__count">{{ b.likes.length }}</span>
-                </button>
-              }
-            </div>
-          </li>
+        @for (b of displayedBooks(); track b._id) {
+          <app-book-card
+            [book]="b"
+            [showLikeButton]="!isOwner(b)"
+            [likedByMe]="isLikedByMe(b)"
+            [likeBusy]="likeBusyId() === b._id"
+            (likeClick)="onLike($event)"
+          />
         }
       </ul>
-      @if (totalPages() > 1) {
-        <nav class="books-pager" aria-label="Book list pages">
-          <button
-            type="button"
-            class="books-pager__btn"
-            [disabled]="currentPage() <= 1"
-            (click)="goPrevPage()"
-          >
-            Previous
-          </button>
-          <span class="books-pager__status"
-            >Page {{ currentPage() }} / {{ totalPages() }}</span
-          >
-          <button
-            type="button"
-            class="books-pager__btn"
-            [disabled]="currentPage() >= totalPages()"
-            (click)="goNextPage()"
-          >
-            Next
-          </button>
-        </nav>
-      }
     }
   }
 </section>

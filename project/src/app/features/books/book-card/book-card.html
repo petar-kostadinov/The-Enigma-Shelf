@@ -30,7 +30,7 @@
       <a
         class="books-chip books-chip--text books-chip--link"
         [routerLink]="fromMyBooks ? '/my-books' : '/books'"
-        [queryParams]="{ genre: book.genre }"
+        [queryParams]="genreListQueryParams()"
         [attr.title]="
           fromMyBooks
             ? 'Show your books in this genre'
@@ -69,7 +69,7 @@
     <a
       class="books-chip books-chip--text books-chip--link"
       [routerLink]="fromMyBooks ? '/my-books' : '/books'"
-      [queryParams]="{ series: book.series }"
+      [queryParams]="seriesListQueryParams()"
       [attr.title]="
         fromMyBooks
           ? 'Show your books in this series'
@@ -100,7 +100,7 @@
   <a
     class="books-read-more"
     [routerLink]="['/books', book._id]"
-    [queryParams]="fromMyBooks ? { from: 'my-books' } : undefined"
+    [queryParams]="detailQueryParams()"
     >Read more…</a
   >
   @if (showLikeButton) {
@@ -126,7 +126,7 @@
     <a
       class="books-read-more book-card__edit-btn"
       [routerLink]="['/books', book._id, 'edit']"
-      [queryParams]="fromMyBooks ? { from: 'my-books' } : undefined"
+      [queryParams]="detailQueryParams()"
       >Edit</a
     >
   }

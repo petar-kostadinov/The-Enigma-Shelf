@@ -28,4 +28,8 @@ export class Header {
       },
     });
   }
+
+  closeProfileMenu(menu: HTMLDetailsElement): void {
+  menu.open = false;
+}
 }
