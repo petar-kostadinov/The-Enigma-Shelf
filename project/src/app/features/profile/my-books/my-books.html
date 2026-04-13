@@ -1,0 +1,100 @@
+<section class="books-shell">
+  <header class="books-head">
+    <h2 class="books-title">My books</h2>
+    <p class="books-subtitle">Books you added to the shelf</p>
+    @if (!loading() && myBooks().length > 0) {
+      <p class="books-my-books-toolbar">
+        <a
+          routerLink="/my-books"
+          [queryParams]="unreadFilterQueryParams()"
+          class="books-my-books-unread-link"
+          [class.books-my-books-unread-link--active]="filterUnread()"
+          >Unread only</a
+        >
+        @if (filterUnread() && !hasActiveFilter()) {
+          <a routerLink="/my-books" class="books-filter-bar__clear">Show all</a>
+        }
+      </p>
+    }
+    @if (hasActiveFilter()) {
+      <p class="books-filter-bar">
+        <span class="books-filter-bar__text">Filtered:</span>
+        @if (filterGenre(); as g) {
+          <span class="books-filter-bar__pill">Genre: {{ g }}</span>
+        }
+        @if (filterSeries(); as s) {
+          <span class="books-filter-bar__pill">Series: {{ s }}</span>
+        }
+        <a routerLink="/my-books" class="books-filter-bar__clear">Show all</a>
+      </p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="books-panel books-panel--empty">
+      <p class="books-muted">Loading…</p>
+    </div>
+  } @else if (myBooks().length === 0) {
+    <div class="books-panel books-panel--empty">
+      <p class="books-muted">You have not added any books yet.</p>
+      <a routerLink="/books/add" class="books-filter-empty-link">Add a book</a>
+    </div>
+  } @else if (displayedMyBooks().length === 0) {
+    <div class="books-panel books-panel--empty">
+      <p class="books-muted">
+        @if (filterUnread()) {
+          No unread books match this filter.
+        } @else {
+          No books match this filter.
+        }
+      </p>
+      <a routerLink="/my-books" class="books-filter-empty-link"
+        >Show all my books</a
+      >
+    </div>
+  } @else {
+    @if (totalPages() > 1) {
+      <p class="books-pager-meta" aria-live="polite">
+        Showing
+        {{ (currentPage() - 1) * pageSize + 1 }}–{{
+          Math.min(currentPage() * pageSize, displayedMyBooks().length)
+        }}
+        of {{ displayedMyBooks().length }}
+      </p>
+    }
+    <ul class="books-grid">
+      @for (b of pagedMyBooks(); track b._id) {
+        <app-book-card
+          [book]="b"
+          [showLikeButton]="false"
+          [showEditButton]="true"
+          [fromMyBooks]="true"
+          [myBooksQueryExtras]="myBooksQueryExtras()"
+        />
+      }
+    </ul>
+    @if (totalPages() > 1) {
+      <nav class="books-pager" aria-label="My book list pages">
+        <button
+          type="button"
+          class="books-pager__btn"
+          [disabled]="currentPage() <= 1"
+          (click)="goPrevPage()"
+        >
+          Previous
+        </button>
+        <span class="books-pager__status"
+          >Page {{ currentPage() }} / {{ totalPages() }}</span
+        >
+        <button
+          type="button"
+          class="books-pager__btn"
+          [disabled]="currentPage() >= totalPages()"
+          (click)="goNextPage()"
+        >
+          Next
+        </button>
+      </nav>
+    }
+  }
+</section>
