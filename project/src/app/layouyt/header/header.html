@@ -55,9 +55,12 @@
             </svg>
           </summary>
           <div class="nav-profile__panel" role="group" aria-label="Profile menu (preview)">
-            <button type="button" class="nav-profile__item" (click)="closeProfileMenu(profileMenu)">
-              Account
-            </button>
+            <a
+              routerLink="/account"
+              class="nav-profile__item"
+              (click)="closeProfileMenu(profileMenu)"
+              >Account</a
+            >
             <a
               routerLink="/my-books"
               class="nav-profile__item"

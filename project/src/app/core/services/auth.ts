@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginCredentials, User, UserForAuth } from '../../shared/interfaces/user';
+import { LoginCredentials, UpdateProfile, User, UserForAuth } from '../../shared/interfaces/user';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +29,10 @@ export class AuthService {
     return this.http.get<User>(`${this.apiUrl}/users/profile`, { withCredentials: true });
   }
 
+  updateProfile(data: UpdateProfile): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/profile`, data, { withCredentials: true });
+  }
+  
   setSession(user: User): void {
     this.user.set(user);
   }

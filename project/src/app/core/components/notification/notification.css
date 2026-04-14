@@ -19,7 +19,9 @@
   user-select: none;
   opacity: 0;
   transform: translateY(-8px);
-  transition: opacity 140ms ease, transform 140ms ease;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
 }
 
 .notification--visible {
@@ -33,13 +35,11 @@
 }
 
 .notification--error {
-  background: rgba(120, 40, 40, 0.28);
-  border-color: rgba(180, 80, 80, 0.4);
-  color: #fecaca;
+  background: rgba(251, 191, 36, 0.24);
+  border-color: rgba(241, 191, 36, 0.6);
 }
 
 .notification--info {
   background: rgba(251, 191, 36, 0.24);
   border-color: rgba(251, 191, 36, 0.6);
 }
-

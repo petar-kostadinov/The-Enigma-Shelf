@@ -55,6 +55,12 @@ export const routes: Routes = [
   },
 
   {
+    path: 'account',
+    loadComponent: () =>
+      import('./features/profile/account/account').then((m) => m.AccountComponent),
+  },
+
+  {
     path: '**',
     loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFoundComponent),
   },
