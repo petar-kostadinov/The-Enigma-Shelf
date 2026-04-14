@@ -1,26 +1,47 @@
 <div class="login-container">
   <div class="login-box">
-    <h1>My Account</h1>
+    <h2>My Account</h2>
+    <p>Update your username and email</p>
 
     @if (isLoading()) {
-      <p>Loading…</p>
+      <p class="account-loading">Loading…</p>
     }
 
     <form [formGroup]="accountForm" (ngSubmit)="onSave()">
       <div class="input-group">
         <label for="username">Username</label>
-        <input id="username" type="text" formControlName="username" autocomplete="username" />
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          autocomplete="username"
+          placeholder="username"
+        />
         @if (accountForm.get('username')?.invalid && accountForm.get('username')?.touched) {
           @if (accountForm.get('username')?.errors?.['required']) {
             <p class="error">Username is required</p>
+          } @else if (accountForm.get('username')?.errors?.['minlength']) {
+            <p class="error">At least 5 characters</p>
+          } @else if (accountForm.get('username')?.errors?.['latinAlnum']) {
+            <p class="error">Only Latin letters and digits</p>
           }
         }
       </div>
       <div class="input-group">
         <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" autocomplete="email" />
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="your@email.com"
+        />
         @if (accountForm.get('email')?.invalid && accountForm.get('email')?.touched) {
-          <p class="error">Enter a valid email</p>
+          @if (accountForm.get('email')?.errors?.['required']) {
+            <p class="error">Email is required</p>
+          } @else if (accountForm.get('email')?.errors?.['email']) {
+            <p class="error">Enter a valid email</p>
+          }
         }
       </div>
       <button
