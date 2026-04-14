@@ -1,0 +1,39 @@
+<div class="login-container">
+  <div class="login-box">
+    <h1>My Account</h1>
+
+    @if (isLoading()) {
+      <p>Loading…</p>
+    }
+
+    <form [formGroup]="accountForm" (ngSubmit)="onSave()">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" autocomplete="username" />
+        @if (accountForm.get('username')?.invalid && accountForm.get('username')?.touched) {
+          @if (accountForm.get('username')?.errors?.['required']) {
+            <p class="error">Username is required</p>
+          }
+        }
+      </div>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" />
+        @if (accountForm.get('email')?.invalid && accountForm.get('email')?.touched) {
+          <p class="error">Enter a valid email</p>
+        }
+      </div>
+      <button
+        type="submit"
+        class="login-btn"
+        [disabled]="accountForm.invalid || isSaving() || isLoading()"
+      >
+        @if (isSaving()) {
+          Saving…
+        } @else {
+          Save changes
+        }
+      </button>
+    </form>
+  </div>
+</div>
