@@ -30,6 +30,17 @@ export class Header {
   }
 
   closeProfileMenu(menu: HTMLDetailsElement): void {
-  menu.open = false;
-}
+    menu.open = false;
+  }
+
+  onSearch(raw: string): void {
+    const search = raw.trim();
+    const path = this.router.url.split('?')[0];
+    const allowed = path === '/home' || path === '/books' || path === '/my-books';
+    const target = allowed ? path : '/books';
+
+    void this.router.navigate([target], {
+      queryParams: search ? { search } : {},
+    });
+  }
 }

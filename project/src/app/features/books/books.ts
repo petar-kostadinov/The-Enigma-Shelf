@@ -16,6 +16,7 @@ import { AuthService } from '../../core/services/auth';
 import { Book } from '../../shared/interfaces/book';
 import { filter, finalize, map, Subscription } from 'rxjs';
 import { BookCardComponent } from './book-card/book-card';
+import { matchesBookQuery } from '../../shared/utils/book-search';
 
 @Component({
   selector: 'app-books',
@@ -32,14 +33,15 @@ export class BooksComponent implements OnInit, OnDestroy {
   private notification = inject(NotificationService);
   private authService = inject(AuthService);
 
-  filterGenre = toSignal(
-    this.route.queryParamMap.pipe(map((p) => p.get('genre'))),
-    { initialValue: null },
-  );
-  filterSeries = toSignal(
-    this.route.queryParamMap.pipe(map((p) => p.get('series'))),
-    { initialValue: null },
-  );
+  filterGenre = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('genre'))), {
+    initialValue: null,
+  });
+  filterSeries = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('series'))), {
+    initialValue: null,
+  });
+  filterSearch = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('search'))), {
+    initialValue: null,
+  });
 
   allBooks = signal<Book[]>([]);
   displayedBooks = computed(() => {
@@ -52,13 +54,16 @@ export class BooksComponent implements OnInit, OnDestroy {
     if (s) {
       list = list.filter((b) => (b.series ?? '') === s);
     }
+
+    const search = this.filterSearch() ?? '';
+    if (search.trim()) {
+      list = list.filter((b) => matchesBookQuery(b, search));
+    }
     return list;
   });
 
   /** За шаблона: дали има активен филтър от URL */
-  hasActiveFilter = computed(
-    () => this.filterGenre() != null || this.filterSeries() != null,
-  );
+  hasActiveFilter = computed(() => this.filterGenre() != null || this.filterSeries() != null);
 
   isLoading = signal(false);
   likeBusyId = signal<string | null>(null);
@@ -111,8 +116,7 @@ export class BooksComponent implements OnInit, OnDestroy {
   isOwner(book: Book): boolean {
     const uid = this.authService.userSignal()?._id;
     if (!uid || !book.owner) return false;
-    const oid =
-      typeof book.owner === 'object' ? book.owner._id : book.owner;
+    const oid = typeof book.owner === 'object' ? book.owner._id : book.owner;
     return String(oid) === String(uid);
   }
 
@@ -137,8 +141,7 @@ export class BooksComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.likeBusyId.set(null);
-        const message =
-          err?.error?.message || 'Could not update your like on this book.';
+        const message = err?.error?.message || 'Could not update your like on this book.';
         this.notification.show(message, 'error', 4500);
       },
     });

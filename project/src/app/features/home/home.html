@@ -11,118 +11,111 @@
   @if (isLoading()) {
     <p class="home-muted">Loading books…</p>
   } @else {
-    <div class="home-columns">
-      <section
-        class="home-section home-section--rated"
-        aria-labelledby="home-top-rated"
-      >
-        <h2 id="home-top-rated" class="home-section__title">Top rated</h2>
-        @if (topRatedBooks().length === 0) {
-          <p class="home-muted">No community ratings yet.</p>
-        } @else {
-          <ul class="home-book-grid">
-            @for (book of topRatedBooks(); track book._id) {
-              <li class="home-book-card">
-                <a class="home-book-card__link" [routerLink]="['/books', book._id]">
-                  @if (book.imageUrl) {
-                    <img
-                      class="home-book-card__cover"
-                      [src]="book.imageUrl"
-                      [alt]="'Cover: ' + book.title"
-                      loading="lazy"
-                    />
-                  } @else {
-                    <div
-                      class="home-book-card__cover home-book-card__cover--placeholder"
-                      aria-hidden="true"
-                    ></div>
-                  }
-                  <span class="home-book-card__title">{{ book.title }}</span>
-                  <span class="home-book-card__author">{{ book.author }}</span>
-                  <span
-                    class="home-book-card__rating"
-                    [attr.aria-label]="
-                      book.communityRating != null
-                        ? 'Rating ' + book.communityRating + ' of 5'
-                        : 'No rating yet'
-                    "
-                  >
-                    <span class="home-book-card__stars" aria-hidden="true">
-                      @for (i of starSlots; track i) {
-                        @if (isStarOn(i, book.communityRating)) {
-                          <span class="home-book-card__star home-book-card__star--on"
-                            >★</span
-                          >
-                        } @else {
-                          <span class="home-book-card__star home-book-card__star--off"
-                            >☆</span
-                          >
+    @if (hasSearch() && !hasSearchMatches()) {
+      <div class="home-empty">
+        <p class="home-muted">No books match your search.</p>
+        <a routerLink="/home" class="home-empty__link">Clear search</a>
+      </div>
+    } @else {
+      <div class="home-columns">
+        <section class="home-section home-section--rated" aria-labelledby="home-top-rated">
+          <h2 id="home-top-rated" class="home-section__title">Top rated</h2>
+          @if (topRatedBooks().length === 0) {
+            <p class="home-muted">No community ratings yet.</p>
+          } @else {
+            <ul class="home-book-grid">
+              @for (book of topRatedBooks(); track book._id) {
+                <li class="home-book-card">
+                  <a class="home-book-card__link" [routerLink]="['/books', book._id]">
+                    @if (book.imageUrl) {
+                      <img
+                        class="home-book-card__cover"
+                        [src]="book.imageUrl"
+                        [alt]="'Cover: ' + book.title"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <div
+                        class="home-book-card__cover home-book-card__cover--placeholder"
+                        aria-hidden="true"
+                      ></div>
+                    }
+                    <span class="home-book-card__title">{{ book.title }}</span>
+                    <span class="home-book-card__author">{{ book.author }}</span>
+                    <span
+                      class="home-book-card__rating"
+                      [attr.aria-label]="
+                        book.communityRating != null
+                          ? 'Rating ' + book.communityRating + ' of 5'
+                          : 'No rating yet'
+                      "
+                    >
+                      <span class="home-book-card__stars" aria-hidden="true">
+                        @for (i of starSlots; track i) {
+                          @if (isStarOn(i, book.communityRating)) {
+                            <span class="home-book-card__star home-book-card__star--on">★</span>
+                          } @else {
+                            <span class="home-book-card__star home-book-card__star--off">☆</span>
+                          }
                         }
-                      }
+                      </span>
                     </span>
-                  </span>
-                </a>
-              </li>
-            }
-          </ul>
-        }
-      </section>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </section>
 
-      <section
-        class="home-section home-section--recent"
-        aria-labelledby="home-recent"
-      >
-        <h2 id="home-recent" class="home-section__title">Recently added</h2>
-        @if (recentBooks().length === 0) {
-          <p class="home-muted">No other recent books to show.</p>
-        } @else {
-          <ul class="home-book-grid">
-            @for (book of recentBooks(); track book._id) {
-              <li class="home-book-card">
-                <a class="home-book-card__link" [routerLink]="['/books', book._id]">
-                  @if (book.imageUrl) {
-                    <img
-                      class="home-book-card__cover"
-                      [src]="book.imageUrl"
-                      [alt]="'Cover: ' + book.title"
-                      loading="lazy"
-                    />
-                  } @else {
-                    <div
-                      class="home-book-card__cover home-book-card__cover--placeholder"
-                      aria-hidden="true"
-                    ></div>
-                  }
-                  <span class="home-book-card__title">{{ book.title }}</span>
-                  <span class="home-book-card__author">{{ book.author }}</span>
-                  <span
-                    class="home-book-card__rating"
-                    [attr.aria-label]="
-                      book.communityRating != null
-                        ? 'Rating ' + book.communityRating + ' of 5'
-                        : 'No rating yet'
-                    "
-                  >
-                    <span class="home-book-card__stars" aria-hidden="true">
-                      @for (i of starSlots; track i) {
-                        @if (isStarOn(i, book.communityRating)) {
-                          <span class="home-book-card__star home-book-card__star--on"
-                            >★</span
-                          >
-                        } @else {
-                          <span class="home-book-card__star home-book-card__star--off"
-                            >☆</span
-                          >
+        <section class="home-section home-section--recent" aria-labelledby="home-recent">
+          <h2 id="home-recent" class="home-section__title">Recently added</h2>
+          @if (recentBooks().length === 0) {
+            <p class="home-muted">No other recent books to show.</p>
+          } @else {
+            <ul class="home-book-grid">
+              @for (book of recentBooks(); track book._id) {
+                <li class="home-book-card">
+                  <a class="home-book-card__link" [routerLink]="['/books', book._id]">
+                    @if (book.imageUrl) {
+                      <img
+                        class="home-book-card__cover"
+                        [src]="book.imageUrl"
+                        [alt]="'Cover: ' + book.title"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <div
+                        class="home-book-card__cover home-book-card__cover--placeholder"
+                        aria-hidden="true"
+                      ></div>
+                    }
+                    <span class="home-book-card__title">{{ book.title }}</span>
+                    <span class="home-book-card__author">{{ book.author }}</span>
+                    <span
+                      class="home-book-card__rating"
+                      [attr.aria-label]="
+                        book.communityRating != null
+                          ? 'Rating ' + book.communityRating + ' of 5'
+                          : 'No rating yet'
+                      "
+                    >
+                      <span class="home-book-card__stars" aria-hidden="true">
+                        @for (i of starSlots; track i) {
+                          @if (isStarOn(i, book.communityRating)) {
+                            <span class="home-book-card__star home-book-card__star--on">★</span>
+                          } @else {
+                            <span class="home-book-card__star home-book-card__star--off">☆</span>
+                          }
                         }
-                      }
+                      </span>
                     </span>
-                  </span>
-                </a>
-              </li>
-            }
-          </ul>
-        }
-      </section>
-    </div>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+    }
   }
 </div>

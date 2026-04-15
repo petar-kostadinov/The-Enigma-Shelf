@@ -1,9 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { finalize, map } from 'rxjs';
 
 import { Book } from '../../shared/interfaces/book';
 import { BooksService } from '../../core/services/books';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { matchesBookQuery } from '../../shared/utils/book-search';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +15,21 @@ import { BooksService } from '../../core/services/books';
 })
 export class HomeComponent implements OnInit {
   private bookService = inject(BooksService);
+  private route = inject(ActivatedRoute);
+
+  filterSearch = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('search'))), {
+    initialValue: null,
+  });
+
+  searchedBooks = computed(() => {
+    const searchText = this.filterSearch() ?? '';
+    const list = this.allBooks();
+    if (!searchText.trim()) return list;
+    return list.filter((b) => matchesBookQuery(b, searchText));
+  });
+
+  hasSearch = computed(() => (this.filterSearch() ?? '').trim().length > 0);
+  hasSearchMatches = computed(() => this.searchedBooks().length > 0);
 
   readonly starSlots = [1, 2, 3, 4, 5] as const;
 
@@ -21,7 +38,7 @@ export class HomeComponent implements OnInit {
   loadError = signal<string | null>(null);
 
   topRatedBooks = computed(() => {
-    const books = this.allBooks();
+    const books = this.searchedBooks();
     const withRating = books.filter(
       (b) => b.communityRating != null && !Number.isNaN(Number(b.communityRating)),
     );
@@ -36,7 +53,7 @@ export class HomeComponent implements OnInit {
   });
 
   recentBooks = computed(() => {
-    const books = this.allBooks();
+    const books = this.searchedBooks();
     const topIds = new Set(this.topRatedBooks().map((b) => b._id));
     const pool = books.filter((b) => !topIds.has(b._id));
     const sorted = [...pool].sort((a, b) => {

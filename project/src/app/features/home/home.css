@@ -187,7 +187,6 @@
   transition: color 0.15s ease;
 }
 
-/* Празни слотове: контурна звезда + по-видим сиво-жълт оттенък върху тъмен фон */
 .home-book-card__star--off {
   color: rgba(253, 230, 138, 0.55);
 }
@@ -195,4 +194,32 @@
 .home-book-card__star--on {
   color: #fbbf24;
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.45);
+}
+
+.home-empty {
+  width: 100%;
+  align-self: stretch;
+  box-sizing: border-box;
+  margin: 10px 0 0;
+  padding: 22px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+  text-align: center;
+}
+
+.home-empty__link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fbbf24;
+  text-decoration: none;
+}
+
+.home-empty__link:hover {
+  text-decoration: underline;
 }

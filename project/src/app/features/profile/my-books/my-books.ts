@@ -7,6 +7,7 @@ import { BookCardComponent } from '../../books/book-card/book-card';
 import { AuthService } from '../../../core/services/auth';
 import { BooksService } from '../../../core/services/books';
 import { Book } from '../../../shared/interfaces/book';
+import { matchesBookQuery } from '../../../shared/utils/book-search';
 
 function isUnreadQueryParam(v: string | null): boolean {
   if (v == null) return false;
@@ -36,6 +37,9 @@ export class MyBooksComponent implements OnInit, OnDestroy {
     this.route.queryParamMap.pipe(map((p) => isUnreadQueryParam(p.get('unread')))),
     { initialValue: false },
   );
+  filterSearch = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('search'))), {
+    initialValue: null,
+  });
 
   allBooks = signal<Book[]>([]);
   loading = signal(true);
@@ -62,6 +66,11 @@ export class MyBooksComponent implements OnInit, OnDestroy {
     if (this.filterUnread()) {
       list = list.filter((b) => b.unread === true);
     }
+    const searchText = this.filterSearch() ?? '';
+    if (searchText.trim()) {
+      list = list.filter((b) => matchesBookQuery(b, searchText));
+    }
+
     return list;
   });
 

@@ -5,6 +5,11 @@
     @if (hasActiveFilter()) {
       <p class="books-filter-bar">
         <span class="books-filter-bar__text">Filtered:</span>
+        @if (filterSearch(); as searchText) {
+          @if (searchText.trim()) {
+            <span class="books-filter-bar__pill">Search: {{ searchText }}</span>
+          }
+        }
         @if (filterGenre(); as g) {
           <span class="books-filter-bar__pill">Genre: {{ g }}</span>
         }
