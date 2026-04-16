@@ -454,7 +454,6 @@ a.bd-chip--link:hover {
   white-space: pre-wrap;
 }
 
-/* Like бутон в един ред с рейтинга (жълт активен вид) */
 .books-like {
   flex: 0 0 auto;
   display: inline-flex;

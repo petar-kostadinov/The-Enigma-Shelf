@@ -15,19 +15,15 @@ import { FormatDateLabelPipe } from '../../../shared/pipes/format-date-label.pip
 export class BookCardComponent {
   @Input({ required: true }) book!: Book;
 
-  /** Когато е false (напр. „моите книги“), не се показва like. */
   @Input() showLikeButton = true;
 
   @Input() likedByMe = false;
   @Input() likeBusy = false;
 
-  /** Втори бутон във footer — Edit (стъклен), вместо like. */
   @Input() showEditButton = false;
 
-  /** Линковете към детайл/редакция носят `?from=my-books` за правилен „Back“. */
   @Input() fromMyBooks = false;
 
-  /** Допълнителни query параметри за /my-books (напр. `unread=1`). */
   @Input() myBooksQueryExtras: Record<string, string> | null = null;
 
   @Output() likeClick = new EventEmitter<Book>();

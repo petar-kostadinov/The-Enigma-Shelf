@@ -76,13 +76,11 @@ export class MyBooksComponent implements OnInit, OnDestroy {
 
   hasActiveFilter = computed(() => this.filterGenre() != null || this.filterSeries() != null);
 
-  /** Query extras за картите (името е различно от @Input на картата, за да няма колизия в шаблона). */
   bookCardUrlExtras = computed((): Record<string, string> | null => {
     if (this.filterUnread()) return { unread: '1' };
     return null;
   });
 
-  /** Линк „Само непрочетени“ със запазени genre/series. */
   unreadFilterQueryParams(): Record<string, string> {
     const p: Record<string, string> = { unread: '1' };
     const g = this.filterGenre();

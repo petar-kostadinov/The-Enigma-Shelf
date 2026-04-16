@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-/** Formats ISO dates for display (e.g. book timestamps). */
 @Pipe({
   name: 'formatDateLabel',
   standalone: true,

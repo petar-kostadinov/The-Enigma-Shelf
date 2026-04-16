@@ -1,4 +1,3 @@
-/* 1. ГЛОБАЛНИ НАСТРОЙКИ (Твоите размери) */
 html,
 body {
   height: 100%;
@@ -11,25 +10,22 @@ body {
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.5)), url('/library_shelf.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* За да стои снимката добре */
+  background-attachment: fixed;
   color: white;
 }
 
-/* 2. ANGULAR СТРУКТУРА (За да работи твоят HTML) */
 app-root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Това казва на Angular да заеме целия екран */
+  min-height: 100vh;
 }
 
-/* Правим компонентите видими за CSS */
 app-header,
 app-footer {
   display: block;
   width: 100%;
 }
 
-/* Нотификациите са position:fixed — host-ът не трябва да участва във flex разпределението */
 app-notification {
   flex: 0 0 auto;
   height: 0;
@@ -38,13 +34,11 @@ app-notification {
   width: 100%;
 }
 
-/* Разпъваме само основното съдържание (router-outlet), не и overlay компоненти */
 app-root > *:not(app-header):not(app-footer):not(app-notification) {
   display: block;
   flex: 1 0 auto;
 }
 
-/* ---------------- 3. NAVBAR (Твоите стилове) ---------------- */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -54,8 +48,6 @@ app-root > *:not(app-header):not(app-footer):not(app-notification) {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(6px);
 }
-
-/* Лого + търсачка: стилове в app-header (header.css) */
 
 .nav-links {
   display: flex;
@@ -92,7 +84,6 @@ app-root > *:not(app-header):not(app-footer):not(app-notification) {
   gap: 10px;
 }
 
-/* AUTH BUTTONS — стъклени като .nav-links */
 .auth-buttons a {
   padding: 6px 14px;
   border-radius: 8px;
@@ -115,7 +106,6 @@ app-root > *:not(app-header):not(app-footer):not(app-notification) {
   color: #fff;
 }
 
-/* ---------------- 4. HERO (Твоите размери) ---------------- */
 .hero {
   text-align: center;
   padding: 80px 20px;
@@ -130,7 +120,6 @@ app-root > *:not(app-header):not(app-footer):not(app-notification) {
   opacity: 0.9;
 }
 
-/* ---------------- 5. BOOK GRID (Твоите размери) ---------------- */
 .books {
   padding: 30px 20px;
   text-align: center;
@@ -159,9 +148,8 @@ app-root > *:not(app-header):not(app-footer):not(app-notification) {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ---------------- 6. FOOTER (Твоето позициониране) ---------------- */
 app-footer {
-  margin-top: auto; /* ТОВА ВЕЧЕ ЩЕ РАБОТИ заради app-root flex */
+  margin-top: auto;
 }
 
 .footer {
@@ -172,72 +160,66 @@ app-footer {
   font-size: 14px;
 }
 
-/* ---------------- МЕДИЙНИ ЗАПИТВАНИЯ ЗА МОБИЛНИ УСТРОЙСТВА ---------------- */
 @media (max-width: 768px) {
-    
-    /* 1. Навигация - премахваме абсолютното центриране, за да не се застъпват елементите */
-    .navbar {
-        flex-direction: column; /* Елементите един под друг */
-        gap: 15px;
-        padding: 20px;
-    }
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+  }
 
-    .nav-links {
-        position: static; /* Премахва absolute */
-        transform: none;  /* Премахва translateX */
-        left: auto;
-        gap: 15px;
-        order: 3; /* Слага линковете най-отдолу в набара */
-    }
+  .nav-links {
+    position: static;
+    transform: none;
+    left: auto;
+    gap: 15px;
+    order: 3;
+  }
 
-    .logo-badge {
-        order: 1;
-    }
+  .logo-badge {
+    order: 1;
+  }
 
-    .nav-right {
-        order: 2;
-        width: 100%;
-        justify-content: center;
-    }
+  .nav-right {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+  }
 
-    .nav-search--expand .nav-search__input {
-        width: min(100%, 200px);
-        max-width: 100%;
-    }
+  .nav-search--expand .nav-search__input {
+    width: min(100%, 200px);
+    max-width: 100%;
+  }
 
-    .nav-search--expand:focus-within .nav-search__input {
-        width: min(100%, 260px);
-    }
+  .nav-search--expand:focus-within .nav-search__input {
+    width: min(100%, 260px);
+  }
 
-    /* 2. Логин форма - правим я да заема повече място на екрана */
-    .login-container {
-        padding: 10px;
-        min-height: 80vh;
-    }
+  .login-container {
+    padding: 10px;
+    min-height: 80vh;
+  }
 
-    .login-box {
-        padding: 25px 20px; /* По-малко вътрешно разстояние */
-        width: 95%;        /* Почти до края на екрана */
-    }
+  .login-box {
+    padding: 25px 20px;
+    width: 95%;
+  }
 
-    .login-box h2 {
-        font-size: 22px;
-    }
+  .login-box h2 {
+    font-size: 22px;
+  }
 
-    /* 3. Книгите (Grid) - правим ги по 2 на ред или 1, ако е много тясно */
-    .book-grid {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 10px;
-        padding: 10px;
-    }
+  .book-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
 
-    .book {
-        width: auto; /* Позволява на грида да контролира размера */
-        padding: 10px;
-    }
+  .book {
+    width: auto;
+    padding: 10px;
+  }
 
-    /* 4. Hero секция */
-    .hero h1 {
-        font-size: 28px;
-    }
+  .hero h1 {
+    font-size: 28px;
+  }
 }

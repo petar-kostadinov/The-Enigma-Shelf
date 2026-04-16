@@ -43,20 +43,15 @@ export class EditBookComponent implements OnInit {
     summary: ['', [Validators.maxLength(2000)]],
     imageUrl: [
       '',
-      [
-        Validators.required,
-        Validators.maxLength(2048),
-        Validators.pattern(/^https?:\/\/.+/i),
-      ],
+      [Validators.required, Validators.maxLength(2048), Validators.pattern(/^https?:\/\/.+/i)],
     ],
   });
 
   isLoading = signal(false);
   loadError = signal<string | null>(null);
   private bookId = '';
-  /** Запазва се от URL при отваряне от „My books“. */
   fromMyBooksRoute = false;
-  /** Филтър „непрочетени“ в my-books, ако е в URL заедно с from. */
+
   unreadMyBooksRoute = false;
 
   private buildMyBooksDetailQueryParams(): Record<string, string> {
@@ -71,11 +66,9 @@ export class EditBookComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fromMyBooksRoute =
-      this.route.snapshot.queryParamMap.get('from') === MY_BOOKS_FROM;
+    this.fromMyBooksRoute = this.route.snapshot.queryParamMap.get('from') === MY_BOOKS_FROM;
     this.unreadMyBooksRoute =
-      this.fromMyBooksRoute &&
-      isUnreadQueryParam(this.route.snapshot.queryParamMap.get('unread'));
+      this.fromMyBooksRoute && isUnreadQueryParam(this.route.snapshot.queryParamMap.get('unread'));
     this.route.paramMap
       .pipe(
         map((p) => p.get('bookId')),

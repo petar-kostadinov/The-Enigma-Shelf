@@ -42,9 +42,7 @@ export class BookDetailsComponent implements OnInit {
   readonly starSlots = [1, 2, 3, 4, 5] as const;
 
   private fromMyBooksContext = toSignal(
-    this.route.queryParamMap.pipe(
-      map((m) => m.get('from') === MY_BOOKS_FROM),
-    ),
+    this.route.queryParamMap.pipe(map((m) => m.get('from') === MY_BOOKS_FROM)),
     { initialValue: false },
   );
 
@@ -53,9 +51,7 @@ export class BookDetailsComponent implements OnInit {
     { initialValue: false },
   );
 
-  booksListPath = computed(() =>
-    this.fromMyBooksContext() ? '/my-books' : '/books',
-  );
+  booksListPath = computed(() => (this.fromMyBooksContext() ? '/my-books' : '/books'));
 
   booksListBackLabel = computed(() =>
     this.fromMyBooksContext() ? '← Back to my books' : '← Back to books',
@@ -72,12 +68,8 @@ export class BookDetailsComponent implements OnInit {
     return undefined;
   }
 
-  listFilterChipQueryParams(
-    kind: 'genre' | 'series',
-    value: string,
-  ): Record<string, string> {
-    const q: Record<string, string> =
-      kind === 'genre' ? { genre: value } : { series: value };
+  listFilterChipQueryParams(kind: 'genre' | 'series', value: string): Record<string, string> {
+    const q: Record<string, string> = kind === 'genre' ? { genre: value } : { series: value };
     if (this.fromMyBooksContext() && this.fromUnreadFilter()) {
       q['unread'] = '1';
     }
@@ -128,8 +120,7 @@ export class BookDetailsComponent implements OnInit {
   isOwner(book: Book): boolean {
     const uid = this.authService.userSignal()?._id;
     if (!uid || !book.owner) return false;
-    const oid =
-      typeof book.owner === 'object' ? book.owner._id : book.owner;
+    const oid = typeof book.owner === 'object' ? book.owner._id : book.owner;
     return String(oid) === String(uid);
   }
 
@@ -161,19 +152,16 @@ export class BookDetailsComponent implements OnInit {
       },
       error: (err) => {
         this.likeBusyId.set(null);
-        const message =
-          err?.error?.message || 'Could not update your like on this book.';
+        const message = err?.error?.message || 'Could not update your like on this book.';
         this.notification.show(message, 'error', 4500);
       },
     });
   }
 
-  /** For template: optional API field */
   isUnreadMarked(book: Book): boolean {
     return book.unread === true;
   }
 
-  /** Current user’s reader score for this book, if any. */
   myVoteScore(book: Book): number | null {
     const uid = this.authService.userSignal()?._id;
     if (!uid || !book.votes?.length) return null;
@@ -185,9 +173,7 @@ export class BookDetailsComponent implements OnInit {
   }
 
   goEdit(bookId: string): void {
-    const extras = this.fromMyBooksContext()
-      ? { queryParams: this.myBooksFlowQueryParams() }
-      : {};
+    const extras = this.fromMyBooksContext() ? { queryParams: this.myBooksFlowQueryParams() } : {};
     void this.router.navigate(['/books', bookId, 'edit'], extras);
   }
 

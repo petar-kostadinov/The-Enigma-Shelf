@@ -62,14 +62,13 @@ export class BooksComponent implements OnInit, OnDestroy {
     return list;
   });
 
-  /** За шаблона: дали има активен филтър от URL */
   hasActiveFilter = computed(() => this.filterGenre() != null || this.filterSeries() != null);
 
   isLoading = signal(false);
   likeBusyId = signal<string | null>(null);
 
   private navSub?: Subscription;
-  /** Предишен URL за детекция „връщане от детайл“ → презареждане на списъка (актуален communityRating). */
+
   private navPrevUrl = '';
 
   ngOnInit(): void {
