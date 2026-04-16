@@ -1,0 +1,11 @@
+<div class="nav-search nav-search--expand">
+  <span class="nav-search__icon" aria-hidden="true">🔍</span>
+  <input
+    #searchBox
+    type="search"
+    class="nav-search__input"
+    placeholder="Search by title or author"
+    autocomplete="off"
+    (keydown.enter)="onSearch(searchBox.value); searchBox.value = ''"
+  />
+</div>

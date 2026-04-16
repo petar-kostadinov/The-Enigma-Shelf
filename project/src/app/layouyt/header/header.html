@@ -26,19 +26,8 @@
       >About</a
     >
   </div>
-
   <div class="nav-right">
-    <div class="nav-search nav-search--expand">
-      <span class="nav-search__icon" aria-hidden="true">🔍</span>
-      <input
-        #searchBox
-        type="search"
-        class="nav-search__input"
-        placeholder="Search by title or author"
-        autocomplete="off"
-        (keydown.enter)="onSearch(searchBox.value); searchBox.value=''"
-      />
-    </div>
+    <app-search />
     @if (authService.userSignal(); as user) {
       <div class="auth-buttons">
         <details class="nav-profile" #profileMenu>
@@ -62,10 +51,7 @@
             </svg>
           </summary>
           <div class="nav-profile__panel" role="group" aria-label="Profile menu (preview)">
-            <a
-              routerLink="/account"
-              class="nav-profile__item"
-              (click)="closeProfileMenu(profileMenu)"
+            <a routerLink="/account" class="nav-profile__item" (click)="closeProfileMenu(profileMenu)"
               >Account</a
             >
             <a
