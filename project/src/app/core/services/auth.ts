@@ -13,9 +13,16 @@ export class AuthService {
   private user = signal<User | null>(null);
   readonly userSignal = this.user.asReadonly();
 
+  private sessionCheckedInternal = signal(false);
+  readonly sessionChecked = this.sessionCheckedInternal.asReadonly();
+
+  markSessionChecked(): void {
+    this.sessionCheckedInternal.set(true);
+  }
+
   login(credentials: LoginCredentials): Observable<User> {
-  return this.http.post<User>(`${this.apiUrl}/login`, credentials, { withCredentials: true });
-}
+    return this.http.post<User>(`${this.apiUrl}/login`, credentials, { withCredentials: true });
+  }
 
   register(data: UserForAuth): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/register`, data, { withCredentials: true });
@@ -32,7 +39,7 @@ export class AuthService {
   updateProfile(data: UpdateProfile): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/users/profile`, data, { withCredentials: true });
   }
-  
+
   setSession(user: User): void {
     this.user.set(user);
   }

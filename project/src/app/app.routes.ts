@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { guestGuard } from './core/guards/guest.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -10,11 +12,13 @@ export const routes: Routes = [
 
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
   },
 
   {
     path: 'register',
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/register/register').then((m) => m.RegisterComponent),
   },
@@ -26,12 +30,14 @@ export const routes: Routes = [
 
   {
     path: 'books/add',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/books/add-book/add-book').then((m) => m.AddBookComponent),
   },
 
   {
     path: 'books/:bookId/edit',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/books/edit-book/edit-book').then((m) => m.EditBookComponent),
   },
@@ -44,6 +50,7 @@ export const routes: Routes = [
 
   {
     path: 'my-books',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/profile/my-books/my-books').then((m) => m.MyBooksComponent),
   },
@@ -56,6 +63,7 @@ export const routes: Routes = [
 
   {
     path: 'account',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/profile/account/account').then((m) => m.AccountComponent),
   },

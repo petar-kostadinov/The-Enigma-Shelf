@@ -11,8 +11,9 @@ import { filter, map, switchMap } from 'rxjs';
 import { finalize } from 'rxjs';
 
 import { BooksService } from '../../../core/services/books';
+import { AuthService } from '../../../core/services/auth';
 import { NotificationService } from '../../../core/services/notification';
-import { CreateBook } from '../../../shared/interfaces/book';
+import { Book, CreateBook } from '../../../shared/interfaces/book';
 
 const MY_BOOKS_FROM = 'my-books' as const;
 
@@ -30,6 +31,7 @@ function isUnreadQueryParam(v: string | null): boolean {
 })
 export class EditBookComponent implements OnInit {
   private booksService = inject(BooksService);
+  private auth = inject(AuthService);
   private notification = inject(NotificationService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -49,6 +51,7 @@ export class EditBookComponent implements OnInit {
 
   isLoading = signal(false);
   loadError = signal<string | null>(null);
+  private editAllowed = signal(false);
   private bookId = '';
   fromMyBooksRoute = false;
 
@@ -65,6 +68,17 @@ export class EditBookComponent implements OnInit {
     return this.unreadMyBooksRoute ? { unread: '1' } : undefined;
   }
 
+  private isOwner(book: Book): boolean {
+    const uid = this.auth.userSignal()?._id;
+    if (!uid || !book.owner) return false;
+    const oid = typeof book.owner === 'object' ? book.owner._id : book.owner;
+    return String(oid) === String(uid);
+  }
+
+  private detailExtras(): { queryParams: Record<string, string> } | Record<string, never> {
+    return this.fromMyBooksRoute ? { queryParams: this.buildMyBooksDetailQueryParams() } : {};
+  }
+
   ngOnInit(): void {
     this.fromMyBooksRoute = this.route.snapshot.queryParamMap.get('from') === MY_BOOKS_FROM;
     this.unreadMyBooksRoute =
@@ -75,6 +89,7 @@ export class EditBookComponent implements OnInit {
         filter((id): id is string => !!id),
         switchMap((id) => {
           this.bookId = id;
+          this.editAllowed.set(false);
           return this.booksService.getBook(id);
         }),
       )
@@ -84,6 +99,12 @@ export class EditBookComponent implements OnInit {
             this.loadError.set('Book not found.');
             return;
           }
+          if (!this.isOwner(book)) {
+            this.notification.show('You can only edit your own books.', 'error', 4500);
+            void this.router.navigate(['/books', this.bookId], this.detailExtras());
+            return;
+          }
+          this.editAllowed.set(true);
           this.form.patchValue({
             title: book.title,
             author: book.author,
@@ -100,6 +121,12 @@ export class EditBookComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid || !this.bookId) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    if (!this.editAllowed()) {
+      this.notification.show('You cannot edit this book.', 'error', 4500);
+      void this.router.navigate(['/books', this.bookId], this.detailExtras());
       return;
     }
 
@@ -122,10 +149,7 @@ export class EditBookComponent implements OnInit {
       .subscribe({
         next: () => {
           this.notification.show('Book updated.', 'success');
-          const extras = this.fromMyBooksRoute
-            ? { queryParams: this.buildMyBooksDetailQueryParams() }
-            : {};
-          void this.router.navigate(['/books', this.bookId], extras);
+          void this.router.navigate(['/books', this.bookId], this.detailExtras());
         },
         error: (err) => {
           const message = err?.error?.message || 'Could not update book.';
@@ -135,9 +159,7 @@ export class EditBookComponent implements OnInit {
   }
 
   cancel(): void {
-    const extras = this.fromMyBooksRoute
-      ? { queryParams: this.buildMyBooksDetailQueryParams() }
-      : {};
+    const extras = this.detailExtras();
     if (this.bookId) {
       void this.router.navigate(['/books', this.bookId], extras);
     } else {

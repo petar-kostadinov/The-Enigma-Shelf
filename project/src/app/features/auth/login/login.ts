@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoginCredentials } from '../../../shared/interfaces/user';
 import { AuthService } from '../../../core/services/auth';
 import { NotificationService } from '../../../core/services/notification';
@@ -24,6 +24,7 @@ export class LoginComponent {
   private notification = inject(NotificationService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -55,7 +56,14 @@ export class LoginComponent {
           this.authService.setSession(user);
           this.notification.show(`Welcome back, ${user.username}!`, 'success');
 
-          this.router.navigate(['/books']);
+          const raw = this.route.snapshot.queryParamMap.get('returnUrl');
+          const safe = raw && raw.startsWith('/') && !raw.startsWith('//') && !raw.includes(':');
+
+          if (safe) {
+            void this.router.navigateByUrl(raw);
+          } else {
+            void this.router.navigate(['/books']);
+          }
         },
         error: (err) => {
           const message = err?.error?.message || 'Login error';
