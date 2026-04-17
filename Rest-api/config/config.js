@@ -5,7 +5,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = {
     development: {
         port: process.env.PORT || 3000,
-        dbURL: process.env.MONGO_URI || 'mongodb://localhost:27017/forum',
+        dbURL: process.env.MONGO_URI || 'mongodb://localhost:27017/book-store',
         origin: ['http://localhost:5555', 'http://localhost:4200']
     },
     production: {
