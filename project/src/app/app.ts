@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { finalize } from 'rxjs';
-import { Header } from './layouyt/header/header';
-import { Footer } from './layouyt/footer/footer';
+import { Header } from './layout/header/header';
+import { Footer } from './layout/footer/footer';
 import { AuthService } from './core/services/auth';
 import { NotificationComponent } from './core/components/notification/notification';
 
